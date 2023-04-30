@@ -12,6 +12,11 @@ export enum Priority {
     BLOCKER = 'Blocker'
 }
 
+export interface Checkpoint {
+    status: DeliveryStatus;
+    date?: Date;
+}
+
 export interface Delivery {
     id: number;
     product: string;
@@ -19,7 +24,8 @@ export interface Delivery {
     deadline: Date;
     status: DeliveryStatus;
     driver: Driver;
-    reports: Array<Report>
+    reports: Array<Report>;
+    history: Array<Checkpoint>;
 }
 
 export interface Truck {
@@ -40,6 +46,8 @@ export interface Driver {
 
 export enum DeliveryStatus {
     STARTED = 'Started',
+    LOADED = 'Loaded',
     IN_PROGRESS = 'In progress',
+    UNLOADED = 'Unloaded',
     FINALIZED = 'Finalized',
 }

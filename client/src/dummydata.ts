@@ -30,22 +30,22 @@ export const drivers: Array<Driver> = [
         firstName: 'John',
         lastName: 'Doe',
         truck: trucks[0],
-        isBusy: false
+        isBusy: false,
     },
     {
         id: 2,
         firstName: 'Adam',
         lastName: 'Jose',
         truck: trucks[1],
-        isBusy: false
+        isBusy: false,
     },
     {
         id: 3,
         firstName: 'Kyle',
         lastName: 'Nowack',
         truck: trucks[2],
-        isBusy: false
-    }
+        isBusy: false,
+    },
 ];
 
 export const reports: Array<Report> = [
@@ -53,22 +53,21 @@ export const reports: Array<Report> = [
         date: new Date(),
         comment: 'My engine is broken',
         priority: Priority.BLOCKER,
-        driver: drivers[0]
+        driver: drivers[0],
     },
     {
         date: new Date(),
         comment: 'Somebody stole my CB-RADIO',
         priority: Priority.MEDIUM,
-        driver: drivers[1]
+        driver: drivers[1],
     },
     {
         date: new Date(),
         comment: 'My usb charger is broken',
         priority: Priority.MINOR,
-        driver: drivers[2]
+        driver: drivers[2],
     },
-
-]
+];
 
 export const deliveries: Array<Delivery> = [
     {
@@ -78,7 +77,16 @@ export const deliveries: Array<Delivery> = [
         deadline: new Date(),
         status: DeliveryStatus.STARTED,
         driver: drivers[0],
-        reports: []
+        reports: [],
+        history: [
+            {
+                status: DeliveryStatus.STARTED,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.LOADED
+            },
+        ],
     },
     {
         id: 2,
@@ -87,7 +95,20 @@ export const deliveries: Array<Delivery> = [
         deadline: new Date(),
         status: DeliveryStatus.IN_PROGRESS,
         driver: drivers[1],
-        reports: []
+        reports: [],
+        history: [
+            {
+                status: DeliveryStatus.STARTED,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.LOADED,
+                date: new Date()
+            },
+            {
+                status: DeliveryStatus.IN_PROGRESS
+            },
+        ],
     },
     {
         id: 3,
@@ -96,6 +117,28 @@ export const deliveries: Array<Delivery> = [
         deadline: new Date(),
         status: DeliveryStatus.FINALIZED,
         driver: drivers[0],
-        reports: []
-    }
-]
+        reports: [],
+        history: [
+            {
+                status: DeliveryStatus.STARTED,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.LOADED,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.IN_PROGRESS,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.UNLOADED,
+                date: new Date(),
+            },
+            {
+                status: DeliveryStatus.FINALIZED,
+                date: new Date(),
+            },
+        ],
+    },
+];
