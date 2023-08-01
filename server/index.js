@@ -4,9 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
+const cors = require('cors');
 const database = require('./models');
+const bodyParser = require('body-parser');
+const app = (0, express_1.default)();
 const port = 3001;
+app.use(cors());
+app.use(bodyParser());
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);
 database.sequelize.sync().then((req) => {

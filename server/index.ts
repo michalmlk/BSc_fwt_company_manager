@@ -1,9 +1,13 @@
 import express, { Express, Request, Response } from 'express';
+const cors = require('cors');
+const database = require('./models');
+const bodyParser = require('body-parser');
 
 const app: Express = express();
-const database = require('./models');
 const port = 3001;
 
+app.use(cors());
+app.use(bodyParser())
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);
 
