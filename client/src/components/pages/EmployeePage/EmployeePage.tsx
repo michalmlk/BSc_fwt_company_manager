@@ -9,16 +9,18 @@ const EmployeePage: React.FC<{}> = () => {
         isModalOpen: isAddEmployeeModalOpen,
         handleModalOpen: handleAddEmployeeModalOpen,
         handleModalClose: handleAddEmployeeModalClose,
+        RenderModal: renderAddEmployeeModal,
     } = useModal();
 
     const AddEmployeeModal = React.useMemo(
-        () => (
-            <Modal
-                title="Add Employee"
-                onClose={handleAddEmployeeModalClose}
-                onConfirm={() => console.log('ok')}
-            ></Modal>
-        ),
+        () =>
+            renderAddEmployeeModal(
+                <Modal
+                    title="Add Employee"
+                    onClose={handleAddEmployeeModalClose}
+                    onConfirm={() => console.log('ok')}
+                ></Modal>
+            ),
         [handleAddEmployeeModalClose]
     );
 

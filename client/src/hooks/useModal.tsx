@@ -12,15 +12,7 @@ const useModal = (isOpen: boolean = false) => {
         setIsModalOpen(false);
     };
 
-    const RenderModal = (title: string, children: ReactNode) => (
-        <>
-            {isModalOpen && (
-                <Modal onClose={handleModalClose} title={title}>
-                    {children}
-                </Modal>
-            )}
-        </>
-    );
+    const RenderModal = (CustomModal: ReactNode) => <>{isModalOpen && CustomModal}</>;
 
     return {
         isModalOpen,
