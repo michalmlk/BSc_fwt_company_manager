@@ -1,21 +1,10 @@
-import React from 'react';
-import { Button } from 'primereact/button';
+import React, { ReactNode } from 'react';
 import useModal from '../../../hooks/useModal';
 import Modal from '../../organisms/Modal/Modal';
+import { ActionBar } from './components/ActionBar';
+import EmployeeGrid from './components/EmployeeGrid';
 
-interface ActionBarProps {
-    onAdd: () => void;
-}
-
-const ActionBar: React.FC<ActionBarProps> = ({ onAdd }) => {
-    return (
-        <div className="flex justify-content-end p-4">
-            <Button icon="pi pi-plus" label="Add employee" rounded onClick={onAdd} />
-        </div>
-    );
-};
-
-const EmployeePage = () => {
+const EmployeePage: React.FC<{}> = () => {
     const {
         isModalOpen: isAddEmployeeModalOpen,
         handleModalOpen: handleAddEmployeeModalOpen,
@@ -23,15 +12,22 @@ const EmployeePage = () => {
     } = useModal();
 
     const AddEmployeeModal = React.useMemo(
-        () => <Modal title="Add Employee" onClose={handleAddEmployeeModalClose} />,
+        () => (
+            <Modal
+                title="Add Employee"
+                onClose={handleAddEmployeeModalClose}
+                onConfirm={() => console.log('ok')}
+            ></Modal>
+        ),
         [handleAddEmployeeModalClose]
     );
 
     return (
-        <>
+        <div className="flex flex-column w-12 relative">
             {isAddEmployeeModalOpen && AddEmployeeModal}
             <ActionBar onAdd={handleAddEmployeeModalOpen} />
-        </>
+            <EmployeeGrid />
+        </div>
     );
 };
 
