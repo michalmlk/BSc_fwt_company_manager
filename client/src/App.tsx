@@ -4,10 +4,13 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Dashboard from './components/pages/Dashboard/Dashboard';
 import EmployeePage from './components/pages/EmployeePage/EmployeePage';
 import MachinePark from './components/pages/MachinePark/MachinePark';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
     return (
         <BrowserRouter>
+            <ToastContainer />
             <MainTemplate>
                 <Routes>
                     <Route path="/deliveries" element={<Dashboard />} />
