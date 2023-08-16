@@ -7,7 +7,6 @@ import { useForm, Resolver, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { ManagerService } from '../../../services/ManagerService';
 import { toast } from 'react-toastify';
-import EmployeeCard from '../../organisms/EmployeeCard/EmployeeCard';
 
 export interface EmployeeData {
     firstName: string;
