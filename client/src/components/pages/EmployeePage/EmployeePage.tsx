@@ -1,12 +1,20 @@
 import React from 'react';
 import useModal from '../../../hooks/useModal';
 import Modal from '../../organisms/Modal/Modal';
-import { ActionBar } from './components/ActionBar';
+import { ActionBar } from '../../atoms/ActionBar';
 import EmployeeGrid from './components/EmployeeGrid';
 import { useForm, Resolver, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { ManagerService } from '../../../services/ManagerService';
 import { toast } from 'react-toastify';
+import EmployeeCard from '../../organisms/EmployeeCard/EmployeeCard';
+
+export interface EmployeeData {
+    firstName: string;
+    lastName: string;
+    age: number;
+    truckId?: number;
+}
 
 const EmployeePage: React.FC<{}> = () => {
     const {
@@ -18,13 +26,7 @@ const EmployeePage: React.FC<{}> = () => {
 
     const managerService = new ManagerService();
 
-    interface EmployeeFormValues {
-        firstName: string;
-        lastName: string;
-        age: number;
-    }
-
-    const resolver: Resolver<EmployeeFormValues> = async (values) => {
+    const resolver: Resolver<EmployeeData> = async (values) => {
         return {
             values: values.firstName ? values : {},
             errors:
@@ -52,7 +54,7 @@ const EmployeePage: React.FC<{}> = () => {
         control,
         reset,
         formState: { errors, isValid, isDirty, isSubmitting },
-    } = useForm<EmployeeFormValues>({
+    } = useForm<EmployeeData>({
         defaultValues: {
             firstName: '',
             lastName: '',
@@ -62,7 +64,7 @@ const EmployeePage: React.FC<{}> = () => {
         resolver,
     });
 
-    const onSubmit = async (data: EmployeeFormValues): Promise<void> => {
+    const onSubmit = async (data: EmployeeData): Promise<void> => {
         const toastId = toast.loading('Creating employee...');
         try {
             await managerService.createEmployee(data);

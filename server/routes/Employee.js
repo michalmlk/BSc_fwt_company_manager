@@ -3,9 +3,17 @@ const { Employee } = require('../models');
 
 const router = express.Router();
 
-router.get('/getAll', async (req, res) => {
-    await res.send(Employee.findAll());
-    return await Employee.findAll();
+router.get('/getAllEmployees', async (req, res) => {
+    try {
+        const data = await Employee.findAll({
+            raw: true,
+        });
+        res.status(200).json(data);
+        // return data;
+    } catch (e) {
+        res.status(401);
+        console.log(e.massage);
+    }
 });
 
 router.post('/createEmployee', async (req, res) => {
