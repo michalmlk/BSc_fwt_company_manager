@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect } from 'react';
-import Modal from '../components/organisms/Modal/Modal';
 
 const useModal = (isOpen: boolean = false) => {
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(isOpen);

@@ -9,7 +9,6 @@ router.get('/getAllEmployees', async (req, res) => {
             raw: true,
         });
         res.status(200).json(data);
-        // return data;
     } catch (e) {
         res.status(401);
         console.log(e.massage);

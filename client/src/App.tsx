@@ -5,22 +5,29 @@ import Dashboard from './components/pages/Dashboard/Dashboard';
 import EmployeePage from './components/pages/EmployeePage/EmployeePage';
 import MachinePark from './components/pages/MachinePark/MachinePark';
 import { ToastContainer } from 'react-toastify';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
+    const queryClient = new QueryClient();
+
     return (
-        <BrowserRouter>
-            <ToastContainer />
-            <MainTemplate>
-                <Routes>
-                    <Route path="/deliveries" element={<Dashboard />} />
-                    <Route path="/employees" element={<EmployeePage />} />
-                    <Route path="/trucks" element={<MachinePark />} />
-                    <Route path="/reports" element={<h1>Hello reports</h1>} />
-                    <Route path="/settings" element={<h1>Welcome settings</h1>} />
-                </Routes>
-            </MainTemplate>
-        </BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen />
+            <BrowserRouter>
+                <ToastContainer />
+                <MainTemplate>
+                    <Routes>
+                        <Route path="/deliveries" element={<Dashboard />} />
+                        <Route path="/employees" element={<EmployeePage />} />
+                        <Route path="/trucks" element={<MachinePark />} />
+                        <Route path="/reports" element={<h1>Hello reports</h1>} />
+                        <Route path="/settings" element={<h1>Welcome settings</h1>} />
+                    </Routes>
+                </MainTemplate>
+            </BrowserRouter>
+        </QueryClientProvider>
     );
 };
 

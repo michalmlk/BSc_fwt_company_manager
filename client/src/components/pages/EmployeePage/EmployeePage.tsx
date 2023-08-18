@@ -7,6 +7,7 @@ import { useForm, Resolver, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { ManagerService } from '../../../services/ManagerService';
 import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 
 export interface EmployeeData {
     firstName: string;
@@ -16,14 +17,15 @@ export interface EmployeeData {
 }
 
 const EmployeePage: React.FC<{}> = () => {
+    const queryClient = useQueryClient();
+    const managerService = new ManagerService();
+
     const {
         isModalOpen: isAddEmployeeModalOpen,
         handleModalOpen: handleAddEmployeeModalOpen,
         handleModalClose: handleAddEmployeeModalClose,
         RenderModal: renderAddEmployeeModal,
     } = useModal();
-
-    const managerService = new ManagerService();
 
     const resolver: Resolver<EmployeeData> = async (values) => {
         return {
@@ -59,7 +61,8 @@ const EmployeePage: React.FC<{}> = () => {
             lastName: '',
             age: 18,
         },
-        // reValidateMode: 'onBlur',
+        mode: 'onChange',
+        reValidateMode: 'onBlur',
         resolver,
     });
 
@@ -68,6 +71,7 @@ const EmployeePage: React.FC<{}> = () => {
         try {
             await managerService.createEmployee(data);
             await toast.success('Employee successfully created.');
+            await queryClient.invalidateQueries(['employees']);
         } catch (e) {
             toast.error('Error at creating employee.');
         }

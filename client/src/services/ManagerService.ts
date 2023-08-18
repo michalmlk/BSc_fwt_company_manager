@@ -15,7 +15,6 @@ export class ManagerService {
 
     async getAllEmployees(): Promise<any[]> {
         return await axios.get(`http://localhost:3001/employee/getAllEmployees`)
-        // .then(res => console.log(res.data));
     }
 
     async updateEmployee(id: number, updateData: any): Promise<void> {
