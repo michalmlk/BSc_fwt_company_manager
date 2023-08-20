@@ -1,7 +1,7 @@
 import React from 'react';
 import { ManagerService } from '../../../../services/ManagerService';
 import EmployeeCard from '../../../organisms/EmployeeCard/EmployeeCard';
-import { EmployeeData } from '../EmployeePage';
+import { Employee } from '../../../../common/model';
 import { useQuery } from '@tanstack/react-query';
 
 const EmployeeGrid: React.FC<{}> = () => {
@@ -9,12 +9,14 @@ const EmployeeGrid: React.FC<{}> = () => {
 
     const { data } = useQuery({
         queryKey: ['employees'],
-        queryFn: async () => await managerService.getAllEmployees(),
+        queryFn: async () => {
+            return await managerService.getAllEmployees();
+        },
     });
 
     return (
         <div className="flex flex-wrap w-12 gap-4 p-4">
-            {data && data.data.map((data: EmployeeData) => <EmployeeCard data={data} />)}
+            {data && data.map((data: Employee) => <EmployeeCard key={data.id} data={data} />)}
         </div>
     );
 };

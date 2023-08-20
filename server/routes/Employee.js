@@ -15,6 +15,20 @@ router.get('/getAllEmployees', async (req, res) => {
     }
 });
 
+router.delete('/deleteEmployee/:id', async (req, res) => {
+    try {
+        await Employee.destroy({
+            where: {
+                id: req.params.id,
+            },
+        });
+        res.status(200).send('Successfuly deleted post');
+    } catch (e) {
+        res.status(500);
+        console.log(`Error: ${e.message}`);
+    }
+});
+
 router.post('/createEmployee', async (req, res) => {
     const newEmployee = Employee.build(req.body);
     try {

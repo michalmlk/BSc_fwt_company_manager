@@ -43,13 +43,6 @@ module.exports = (Sequelize, DataTypes) => {
         truckId: {
             type: DataTypes.INTEGER,
         },
-        status: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                notEmpty: true,
-            },
-        },
     });
 
     return Employee;
