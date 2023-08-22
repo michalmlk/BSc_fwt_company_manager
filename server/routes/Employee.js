@@ -22,7 +22,7 @@ router.delete('/deleteEmployee/:id', async (req, res) => {
                 id: req.params.id,
             },
         });
-        res.status(200).send('Successfuly deleted post');
+        res.status(200).send('Successfully deleted employee.');
     } catch (e) {
         res.status(500);
         console.log(`Error: ${e.message}`);

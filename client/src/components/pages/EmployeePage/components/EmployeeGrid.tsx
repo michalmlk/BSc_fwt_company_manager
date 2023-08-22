@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { ManagerService } from '../../../../services/ManagerService';
 import { Employee } from '../../../../common/model';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Tag } from 'primereact/tag';
 import { FilterMatchMode } from 'primereact/api';
 import { DataTableFilterMeta } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { toast } from 'react-toastify';
+import useModal from '../../../../hooks/useModal';
+import Modal from '../../../organisms/Modal/Modal';
 
 const EmployeeGrid: React.FC<{}> = () => {
     const managerService = new ManagerService();
+    const [employeeData, setEmployeeData] = useState<Employee>();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         firstName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -19,6 +24,46 @@ const EmployeeGrid: React.FC<{}> = () => {
     });
 
     const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+    const {
+        isModalOpen: isDeleteEmployeeModalOpen,
+        handleModalOpen: handleDeleteEmployeeModalOpen,
+        handleModalClose: handleDeleteEmployeeModalClose,
+        RenderModal: renderDeleteEmployeeModal,
+    } = useModal();
+
+    const { data } = useQuery({
+        queryKey: ['employees'],
+        queryFn: async (): Promise<Employee[] | undefined> => {
+            return await managerService.getAllEmployees();
+        },
+    });
+
+    const queryClient = useQueryClient();
+
+    const DeleteEmployeeModal = React.useMemo(() => {
+        return renderDeleteEmployeeModal(
+            employeeData && (
+                <Modal
+                    title="Delete Employee"
+                    onClose={handleDeleteEmployeeModalClose}
+                    onConfirm={() => {
+                        onRowDelete(employeeData.id);
+                        handleDeleteEmployeeModalClose();
+                    }}
+                    type="button"
+                    label="Delete"
+                    icon="pi pi-trash"
+                >
+                    <h3>Are you sure you want to delete employee?</h3>
+                    <div>
+                        <p>First name: {employeeData.firstName}</p>
+                        <p>Last name: {employeeData.lastName}</p>
+                        <p>Truck ID: {employeeData.truckId || 'No truck assigned'}</p>
+                    </div>
+                </Modal>
+            )
+        );
+    }, [handleDeleteEmployeeModalClose]);
 
     const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -42,13 +87,6 @@ const EmployeeGrid: React.FC<{}> = () => {
             </div>
         );
     };
-
-    const { data } = useQuery({
-        queryKey: ['employees'],
-        queryFn: async (): Promise<Employee[] | undefined> => {
-            return await managerService.getAllEmployees();
-        },
-    });
 
     const truckColumnTemplate = (data: Employee): JSX.Element => {
         return data.truckId ? (
@@ -78,8 +116,39 @@ const EmployeeGrid: React.FC<{}> = () => {
         </div>
     );
 
+    const onRowDelete = async (id: number) => {
+        const toastId = toast.loading('Deleting user...');
+        try {
+            await managerService.deleteEmployee(id);
+            toast.success('Employee successfully deleted');
+            await queryClient.invalidateQueries(['employees']);
+        } catch (e: any) {
+            toast.error('Failed to delete employee.');
+        }
+        toast.dismiss(toastId);
+    };
+
+    const actionsTemplate = (data: Employee): JSX.Element => (
+        <div className="flex gap-3 justify-content-end">
+            <Button icon="pi pi-file-edit" rounded text />
+            <Button icon="pi pi-pencil" rounded text />
+            <Button icon="pi pi-truck" rounded text />
+            <Button
+                icon="pi pi-trash"
+                rounded
+                text
+                onClick={() => {
+                    setEmployeeData(data);
+                    handleDeleteEmployeeModalOpen();
+                }}
+                disabled={!!data.currentDeliveryId}
+                //TODO add tooltip
+            />
+        </div>
+    );
+
     return (
-        <div className="flex flex-wrap w-12 gap-4 p-4">
+        <div className="flex flex-wrap w-12 gap-4 p-6">
             {data && (
                 <DataTable
                     value={data}
@@ -95,8 +164,10 @@ const EmployeeGrid: React.FC<{}> = () => {
                     <Column field="truckId" header="Truck" body={truckColumnTemplate} />
                     <Column field="currentDeliveryId" header="Delivery Id" body={deliveryColumnTemplate} />
                     <Column field="currentDeliveryId" header="Status" body={statusColumnTemplate} />
+                    <Column body={actionsTemplate} />
                 </DataTable>
             )}
+            {isDeleteEmployeeModalOpen && DeleteEmployeeModal}
         </div>
     );
 };

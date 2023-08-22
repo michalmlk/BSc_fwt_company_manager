@@ -59,7 +59,7 @@ const EmployeePage: React.FC<{}> = () => {
         const toastId = toast.loading('Creating employee...');
         try {
             await managerService.createEmployee(data);
-            await toast.success('Employee successfully created.');
+            toast.success('Employee successfully created.');
             await queryClient.invalidateQueries(['employees']);
         } catch (e) {
             toast.error('Error at creating employee.');
@@ -179,6 +179,7 @@ const EmployeePage: React.FC<{}> = () => {
                     type="submit"
                     label="Add"
                     disabled={!isValid}
+                    icon="pi pi-plus"
                 >
                     {AddEmployeeForm}
                 </Modal>
