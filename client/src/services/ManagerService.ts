@@ -46,7 +46,7 @@ export class ManagerService {
             firstName,
             lastName,
             age,
-            phoneNumber: parseInt(phoneNumber),
+            phoneNumber: parseInt(phoneNumber!),
             email,
             currentDeliveryId: currentDeliveryId || undefined,
             truckId: truckId || undefined

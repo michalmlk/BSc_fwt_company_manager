@@ -30,6 +30,12 @@ const EmployeeGrid: React.FC<{}> = () => {
         handleModalClose: handleDeleteEmployeeModalClose,
         RenderModal: renderDeleteEmployeeModal,
     } = useModal();
+    const {
+        isModalOpen: isEmployeeFormModalOpen,
+        handleModalOpen: handleEmployeeFormModalOpen,
+        handleModalClose: handleEmployeeFormModalClose,
+        RenderModal: renderEmployeeFormModal,
+    } = useModal();
 
     const { data } = useQuery({
         queryKey: ['employees'],
@@ -131,7 +137,15 @@ const EmployeeGrid: React.FC<{}> = () => {
     const actionsTemplate = (data: Employee): JSX.Element => (
         <div className="flex gap-3 justify-content-end">
             <Button icon="pi pi-file-edit" rounded text />
-            <Button icon="pi pi-pencil" rounded text />
+            <Button
+                icon="pi pi-pencil"
+                rounded
+                text
+                onClick={() => {
+                    setEmployeeData(data);
+                    handleEmployeeFormModalOpen();
+                }}
+            />
             <Button icon="pi pi-truck" rounded text />
             <Button
                 icon="pi pi-trash"
@@ -168,6 +182,7 @@ const EmployeeGrid: React.FC<{}> = () => {
                 </DataTable>
             )}
             {isDeleteEmployeeModalOpen && DeleteEmployeeModal}
+            {/* {isEmployeeFormModalOpen && EmployeeFormModal} */}
         </div>
     );
 };
