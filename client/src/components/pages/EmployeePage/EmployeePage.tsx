@@ -13,7 +13,7 @@ import { classNames } from 'primereact/utils';
 import { EmployeeSchema, employeeSchema } from '../../../common/model';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const defaultEmployeeFormValues = {
+const defaultValues = {
     firstName: '',
     lastName: '',
     age: 18,
@@ -24,17 +24,6 @@ const defaultEmployeeFormValues = {
 const EmployeePage: React.FC<{}> = () => {
     const queryClient = useQueryClient();
     const managerService = new ManagerService();
-
-    const getFormErrorMessage = (name: string) => {
-        //@ts-ignore
-        return errors[name] ? (
-            //@ts-ignore
-            <small className="p-error">{errors[name].message}</small>
-        ) : (
-            <small className="p-error">&nbsp;</small>
-        );
-    };
-
     const {
         isModalOpen: isAddEmployeeModalOpen,
         handleModalOpen: handleAddEmployeeModalOpen,
@@ -43,17 +32,11 @@ const EmployeePage: React.FC<{}> = () => {
     } = useModal();
 
     const {
-        handleSubmit,
         control,
+        formState: { errors },
+        handleSubmit,
         reset,
-        watch,
-        formState: { errors, isValid, isDirty, isSubmitting },
-    } = useForm<EmployeeSchema>({
-        defaultValues: defaultEmployeeFormValues,
-        resolver: zodResolver(employeeSchema),
-        mode: 'onChange',
-        reValidateMode: 'onChange',
-    });
+    } = useForm<EmployeeSchema>({ defaultValues, resolver: zodResolver(employeeSchema), reValidateMode: 'onChange' });
 
     const onSubmit = async (data: EmployeeSchema): Promise<void> => {
         const toastId = toast.loading('Creating employee...');
@@ -69,102 +52,13 @@ const EmployeePage: React.FC<{}> = () => {
         toast.dismiss(toastId);
     };
 
-    const AddEmployeeForm = React.useMemo(() => {
-        const w = watch();
-        return (
-            <form onSubmit={handleSubmit((data) => onSubmit(data))}>
-                <div className="flex flex-column gap-3 align-items-start">
-                    <Controller
-                        name="firstName"
-                        control={control}
-                        render={({ field }) => (
-                            <>
-                                <InputText
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    onBlur={field.onBlur}
-                                    placeholder="First name"
-                                />
-                                {getFormErrorMessage(field.name)}
-                            </>
-                        )}
-                    />
-
-                    <Controller
-                        name="lastName"
-                        control={control}
-                        rules={{ required: 'Last name is required' }}
-                        render={({ field }) => (
-                            <>
-                                <InputText
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    onBlur={field.onBlur}
-                                    placeholder="Last name"
-                                />
-                                {getFormErrorMessage(field.name)}
-                            </>
-                        )}
-                    />
-                    <Controller
-                        name="age"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <>
-                                <InputNumber
-                                    id={field.name}
-                                    inputRef={field.ref}
-                                    value={field.value}
-                                    onBlur={field.onBlur}
-                                    onValueChange={(e) => field.onChange(e)}
-                                    useGrouping={false}
-                                    placeholder="Age"
-                                    inputClassName={classNames({ 'p-invalid': fieldState.error })}
-                                />
-                                {getFormErrorMessage(field.name)}
-                            </>
-                        )}
-                    />
-                    <Controller
-                        name="phoneNumber"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <>
-                                <InputText
-                                    id={field.name}
-                                    value={field.value}
-                                    onBlur={field.onBlur}
-                                    onChange={(e) => field.onChange(e)}
-                                    className={classNames({ 'p-invalid': fieldState.error })}
-                                    placeholder="Phone number"
-                                />
-                                {getFormErrorMessage(field.name)}
-                            </>
-                        )}
-                    />
-                    <Controller
-                        name="email"
-                        control={control}
-                        render={({ field }) => (
-                            <>
-                                <InputText
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    onBlur={field.onBlur}
-                                    placeholder="Email"
-                                />
-                                {getFormErrorMessage(field.name)}
-                            </>
-                        )}
-                    />
-                </div>
-                <pre>{JSON.stringify(w, null, 2)}</pre>
-            </form>
+    const getFormErrorMessage = (name) => {
+        return errors[name] ? (
+            <small className="p-error">{errors[name].message}</small>
+        ) : (
+            <small className="p-error">&nbsp;</small>
         );
-    }, []);
+    };
 
     const AddEmployeeModal = React.useMemo(
         () =>
@@ -178,13 +72,103 @@ const EmployeePage: React.FC<{}> = () => {
                     onConfirm={handleSubmit(onSubmit)}
                     type="submit"
                     label="Add"
-                    disabled={!isValid}
                     icon="pi pi-plus"
                 >
-                    {AddEmployeeForm}
+                    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+                        <div className="flex flex-column gap-3 align-items-start">
+                            <Controller
+                                name="firstName"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <>
+                                        <label htmlFor={field.name}>First name</label>
+                                        <InputText
+                                            name={field.name}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            placeholder="First name"
+                                        />
+                                        {getFormErrorMessage(field.name)}
+                                    </>
+                                )}
+                            />
+                            <Controller
+                                name="lastName"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <>
+                                        <label htmlFor={field.name}>Last name</label>
+                                        <InputText
+                                            name={field.name}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            placeholder="Last name"
+                                        />
+                                        {getFormErrorMessage(field.name)}
+                                    </>
+                                )}
+                            />
+                            <Controller
+                                name="age"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <>
+                                        <label htmlFor="age">Age</label>
+                                        <InputNumber
+                                            id={field.name}
+                                            inputRef={field.ref}
+                                            value={field.value}
+                                            onBlur={field.onBlur}
+                                            onValueChange={(e) => field.onChange(e)}
+                                            useGrouping={false}
+                                            placeholder="Age"
+                                            inputClassName={classNames({ 'p-invalid': fieldState.error })}
+                                        />
+                                        {getFormErrorMessage(field.name)}
+                                    </>
+                                )}
+                            />
+                            <Controller
+                                name="phoneNumber"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <>
+                                        <label htmlFor={field.name}>Phone number</label>
+                                        <InputText
+                                            name={field.name}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            placeholder="Phone number"
+                                        />
+                                        {getFormErrorMessage(field.name)}
+                                    </>
+                                )}
+                            />
+                            <Controller
+                                name="email"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <>
+                                        <label htmlFor={field.name}>Email</label>
+                                        <InputText
+                                            name={field.name}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            placeholder="Email"
+                                        />
+                                        {getFormErrorMessage(field.name)}
+                                    </>
+                                )}
+                            />
+                        </div>
+                    </form>
                 </Modal>
             ),
-        [handleAddEmployeeModalClose, isSubmitting, isDirty, isValid]
+        [handleAddEmployeeModalClose, errors]
     );
 
     return (
