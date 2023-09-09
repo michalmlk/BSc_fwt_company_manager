@@ -16,6 +16,12 @@ const EmployeePage: React.FC<{}> = () => {
         handleModalClose: handleAddEmployeeModalClose,
         RenderModal: renderAddEmployeeModal,
     } = useModal();
+    const {
+        isModalOpen: isAssignTruckModalOpen,
+        handleModalOpen: handleAssignTruckModalOpen,
+        handleModalClose: handleAssignTruckModalClose,
+        RenderModal: renderAssignTruckModal,
+    } = useModal();
 
     const { onSubmit, errors, reset, handleSubmit, control } = useEmployeeForm({
         onClose: handleAddEmployeeModalClose,
@@ -30,6 +36,13 @@ const EmployeePage: React.FC<{}> = () => {
             <small className="p-error">&nbsp;</small>
         );
     };
+
+    const AssignTruckModal = React.useMemo(() => (
+        <Modal title="Assign truck" onClose={handleAssignTruckModalClose} type="button" label="Assign" icon="pi pi-truck">
+
+        </Modal>
+        )
+    )
 
     const EmployeeFormModal = React.useMemo(
         () =>
@@ -140,12 +153,13 @@ const EmployeePage: React.FC<{}> = () => {
                     </form>
                 </Modal>
             ),
-        [handleAddEmployeeModalClose, errors]
+        [handleAddEmployeeModalClose, reset, onSubmit]
     );
 
     return (
         <div className="flex flex-column w-12 relative">
             {isAddEmployeeModalOpen && EmployeeFormModal}
+            {isAssignTruckModalOpen && AssignTruckModal}
             <ActionBar onAdd={handleAddEmployeeModalOpen} />
             <EmployeeGrid />
         </div>

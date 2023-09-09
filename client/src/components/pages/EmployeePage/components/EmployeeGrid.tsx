@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import useModal from '../../../../hooks/useModal';
 import Modal from '../../../organisms/Modal/Modal';
 
-const EmployeeGrid: React.FC<{}> = () => {
+const EmployeeGrid: React.FC = () => {
     const managerService = new ManagerService();
     const [employeeData, setEmployeeData] = useState<Employee>();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
@@ -22,19 +22,22 @@ const EmployeeGrid: React.FC<{}> = () => {
         lastName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         currentDeliveryId: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
-
     const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+
     const {
         isModalOpen: isDeleteEmployeeModalOpen,
         handleModalOpen: handleDeleteEmployeeModalOpen,
         handleModalClose: handleDeleteEmployeeModalClose,
         RenderModal: renderDeleteEmployeeModal,
     } = useModal();
+
+    const { handleModalOpen: handleEmployeeFormModalOpen } = useModal();
+
     const {
-        isModalOpen: isEmployeeFormModalOpen,
-        handleModalOpen: handleEmployeeFormModalOpen,
-        handleModalClose: handleEmployeeFormModalClose,
-        RenderModal: renderEmployeeFormModal,
+        isModalOpen: isAssignTruckModalOpen,
+        handleModalOpen: handleAssignTruckModalOpen,
+        handleModalClose: handleAssignTruckModalClose,
+        RenderModal: renderAssignTruckModal,
     } = useModal();
 
     const { data } = useQuery({
@@ -53,7 +56,7 @@ const EmployeeGrid: React.FC<{}> = () => {
                     title="Delete Employee"
                     onClose={handleDeleteEmployeeModalClose}
                     onConfirm={() => {
-                        onRowDelete(employeeData.id);
+                        onRowDelete(employeeData!.id);
                         handleDeleteEmployeeModalClose();
                     }}
                     type="button"
@@ -70,6 +73,23 @@ const EmployeeGrid: React.FC<{}> = () => {
             )
         );
     }, [handleDeleteEmployeeModalClose]);
+
+    const AssignTruckModal = React.useMemo(() => {
+        return renderAssignTruckModal(
+            <Modal
+                title="Assign truck"
+                onClose={handleAssignTruckModalClose}
+                onConfirm={() => {
+                    // handleAssignTruckModalClose();
+                }}
+                type="button"
+                label="Assign"
+                icon="pi pi-check"
+            >
+                Assign your truck
+            </Modal>
+        );
+    }, [handleAssignTruckModalClose]);
 
     const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -146,7 +166,14 @@ const EmployeeGrid: React.FC<{}> = () => {
                     handleEmployeeFormModalOpen();
                 }}
             />
-            <Button icon="pi pi-truck" rounded text />
+            <Button
+                icon="pi pi-truck"
+                rounded
+                text
+                onClick={() => {
+                    handleAssignTruckModalOpen();
+                }}
+            />
             <Button
                 icon="pi pi-trash"
                 rounded
@@ -182,7 +209,7 @@ const EmployeeGrid: React.FC<{}> = () => {
                 </DataTable>
             )}
             {isDeleteEmployeeModalOpen && DeleteEmployeeModal}
-            {/* {isEmployeeFormModalOpen && EmployeeFormModal} */}
+            {isAssignTruckModalOpen && AssignTruckModal}
         </div>
     );
 };

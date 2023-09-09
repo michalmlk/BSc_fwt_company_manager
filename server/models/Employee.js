@@ -47,3 +47,5 @@ module.exports = (Sequelize, DataTypes) => {
 
     return Employee;
 };
+
+
