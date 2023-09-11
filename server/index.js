@@ -13,6 +13,8 @@ app.use(cors());
 app.use(bodyParser());
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);
+const trucksRoute = require('./routes/Truck');
+app.use('/truck', trucksRoute);
 database.sequelize.sync().then((req) => {
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

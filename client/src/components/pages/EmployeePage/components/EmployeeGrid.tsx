@@ -11,7 +11,8 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { toast } from 'react-toastify';
 import useModal from '../../../../hooks/useModal';
-import Modal from '../../../organisms/Modal/Modal';
+import Modal from '../../../organisms/Modal/Modal/Modal';
+import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModalContent';
 
 const EmployeeGrid: React.FC = () => {
     const managerService = new ManagerService();
@@ -55,8 +56,8 @@ const EmployeeGrid: React.FC = () => {
                 <Modal
                     title="Delete Employee"
                     onClose={handleDeleteEmployeeModalClose}
-                    onConfirm={() => {
-                        onRowDelete(employeeData!.id);
+                    onConfirm={async () => {
+                        await onRowDelete(employeeData!.id);
                         handleDeleteEmployeeModalClose();
                     }}
                     type="button"
@@ -86,14 +87,14 @@ const EmployeeGrid: React.FC = () => {
                 label="Assign"
                 icon="pi pi-check"
             >
-                Assign your truck
+                <AssignTruckModalContent id={employeeData?.id || 0} />
             </Modal>
         );
     }, [handleAssignTruckModalClose]);
 
     const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        let _filters = { ...filters };
+        const _filters = { ...filters };
 
         // @ts-ignore
         _filters['global'].value = value;
@@ -171,6 +172,7 @@ const EmployeeGrid: React.FC = () => {
                 rounded
                 text
                 onClick={() => {
+                    setEmployeeData(data);
                     handleAssignTruckModalOpen();
                 }}
             />

@@ -8,8 +8,12 @@ const port = 3001;
 
 app.use(cors());
 app.use(bodyParser())
+
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);
+
+const trucksRoute = require('./routes/Truck');
+app.use('/truck', trucksRoute);
 
 database.sequelize.sync().then((req: Request) => {
     app.listen(port, () => {

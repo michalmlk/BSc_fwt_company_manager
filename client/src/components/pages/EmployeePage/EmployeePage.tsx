@@ -1,6 +1,6 @@
 import React from 'react';
 import useModal from '../../../hooks/useModal';
-import Modal from '../../organisms/Modal/Modal';
+import Modal from '../../organisms/Modal/Modal/Modal';
 import { ActionBar } from '../../atoms/ActionBar';
 import EmployeeGrid from './components/EmployeeGrid';
 import { Controller } from 'react-hook-form';
