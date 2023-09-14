@@ -38,11 +38,14 @@ const EmployeePage: React.FC<{}> = () => {
     };
 
     const AssignTruckModal = React.useMemo(() => (
-        <Modal title="Assign truck" onClose={handleAssignTruckModalClose} type="button" label="Assign" icon="pi pi-truck">
-
-        </Modal>
-        )
-    )
+        <Modal
+            title="Assign truck"
+            onClose={handleAssignTruckModalClose}
+            type="button"
+            label="Assign"
+            icon="pi pi-truck"
+        ></Modal>
+    ));
 
     const EmployeeFormModal = React.useMemo(
         () =>
@@ -58,6 +61,7 @@ const EmployeePage: React.FC<{}> = () => {
                     type="submit"
                     label="Add"
                     icon="pi pi-plus"
+                    renderFooter
                 >
                     <form onSubmit={handleSubmit((data) => onSubmit(data))}>
                         <div className="flex flex-column gap-3 align-items-start">

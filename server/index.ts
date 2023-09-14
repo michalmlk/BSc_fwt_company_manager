@@ -7,7 +7,8 @@ const app: Express = express();
 const port = 3001;
 
 app.use(cors());
-app.use(bodyParser())
+app.use(bodyParser());
+app.use(express.json());
 
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);

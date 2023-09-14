@@ -63,6 +63,7 @@ const EmployeeGrid: React.FC = () => {
                     type="button"
                     label="Delete"
                     icon="pi pi-trash"
+                    renderFooter
                 >
                     <h3>Are you sure you want to delete employee?</h3>
                     <div>
@@ -86,11 +87,12 @@ const EmployeeGrid: React.FC = () => {
                 type="button"
                 label="Assign"
                 icon="pi pi-check"
+                renderFooter={false}
             >
-                <AssignTruckModalContent id={employeeData?.id || 0} />
+                <AssignTruckModalContent employee={employeeData} onClose={handleAssignTruckModalClose} />
             </Modal>
         );
-    }, [handleAssignTruckModalClose]);
+    }, [handleAssignTruckModalClose, employeeData]);
 
     const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;

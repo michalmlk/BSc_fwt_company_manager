@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ManagerService } from '../../../services/ManagerService';
 import { Truck } from '../../../Model';
-
 import { Dropdown } from 'primereact/dropdown';
+import { Employee } from '../../../common/model';
+import { ModalFooter } from './Modal/Modal';
+import { toast } from 'react-toastify';
 
-const AssignTruckModalContent: React.FC = (id: number | undefined) => {
+const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClose: () => void }> = ({
+    employee,
+    onClose,
+}) => {
     const service = new ManagerService();
+    const [trucks, setTrucks] = useState<Truck[]>([]);
+    const [selectedTruck, setSelectedTruck] = useState<Truck | undefined>();
+    const queryClient = useQueryClient();
 
     const { data } = useQuery({
         queryKey: ['trucks'],
@@ -15,26 +23,48 @@ const AssignTruckModalContent: React.FC = (id: number | undefined) => {
         },
     });
 
-    console.log(data);
-
-    const [trucks, setTrucks] = useState<Truck[]>([]);
-
     useEffect(() => {
-        if (data) {
-            setTrucks(data);
+        if (data && employee) {
+            console.log(data);
+            setTrucks(data.filter((d) => d.driverId == null));
+            setSelectedTruck(data.filter((t) => t.id == employee.truckId)[0]);
         }
-    }, [data]);
+    }, [data, employee]);
+
+    const handleAssignTruckConfirm = async (): Promise<void> => {
+        const toastId = toast.loading(employee?.truckId ? 'Changing truck assignment...' : 'Assigning truck...');
+        if (employee && selectedTruck) {
+            try {
+                await service.updateTruckAssignment(employee.id, selectedTruck.id);
+                await queryClient.invalidateQueries(['employees']);
+                toast.success('Truck successfully updated.');
+                onClose();
+            } catch (e) {
+                toast.error('Failed to update truck assignment.');
+            }
+            toast.dismiss(toastId);
+        }
+    };
 
     return (
-        <Dropdown
-            value={trucks[0]}
-            onChange={(e) => console.log(e)}
-            options={trucks}
-            optionLabel="model"
-            placeholder="Select Truck"
-            className="w-12 mb-4"
-        />
+        <>
+            <Dropdown
+                value={selectedTruck}
+                onChange={(e) => setSelectedTruck(trucks.find((t) => t.id === e.value.id))}
+                options={trucks}
+                optionLabel="model"
+                placeholder="Select Truck"
+                className="w-12 mb-4"
+            />
+            <ModalFooter
+                onClose={onClose}
+                onConfirm={handleAssignTruckConfirm}
+                icon="pi pi-plus"
+                label="Assign"
+                disabled={false}
+                type="button"
+            />
+        </>
     );
 };
-
 export default AssignTruckModalContent;

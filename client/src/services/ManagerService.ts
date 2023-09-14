@@ -70,4 +70,14 @@ export class ManagerService {
             console.log(`Failed to fetching trucks: ${e.message}`);
         }
     }
+
+    async updateTruckAssignment(id: number, truckId: number): Promise<void> {
+        try {
+            console.log(`Updating truck: ${truckId} assignment...`);
+            await axios.post(`http://localhost:3001/employee/updateEmployee/${id}/truck`, truckId);
+            console.log('Update successful.');
+        } catch (e) {
+            console.log(`Failed to update truck : ${truckId} assignment.`);
+        }
+    }
 }

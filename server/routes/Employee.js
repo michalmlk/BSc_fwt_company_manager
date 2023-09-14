@@ -11,7 +11,7 @@ router.get('/getAllEmployees', async (req, res) => {
         res.status(200).json(data);
     } catch (e) {
         res.status(401);
-        console.log(e.massage);
+        console.log(e.message);
     }
 });
 
@@ -45,8 +45,22 @@ router.put('/updateEmployee/:id', async (req, res) => {
         const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
         await user.update({ ...req.body });
         await user.save();
+        res.status(201).json(user);
     } catch (e) {
         console.log('Failed to update employee');
+    }
+});
+
+router.post('/updateEmployee/:id/truck', async (req, res) => {
+    try {
+        const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
+        //TODO little hacky solution - fix
+        await user.update({ truckId: Object.keys(req.body) });
+        await user.save();
+        res.status(200).json(user);
+    } catch (e) {
+        res.status(400);
+        console.log('Failed to update truck assignment.');
     }
 });
 

@@ -11,6 +11,7 @@ const app = (0, express_1.default)();
 const port = 3001;
 app.use(cors());
 app.use(bodyParser());
+app.use(express_1.default.json());
 const employeeRoute = require('./routes/Employee');
 app.use('/employee', employeeRoute);
 const trucksRoute = require('./routes/Truck');
