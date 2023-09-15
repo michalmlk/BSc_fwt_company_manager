@@ -43,9 +43,6 @@ module.exports = (Sequelize, DataTypes) => {
         truckId: {
             type: DataTypes.INTEGER,
         },
-    });
-
+    })
     return Employee;
 };
-
-

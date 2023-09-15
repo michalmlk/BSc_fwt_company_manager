@@ -9,18 +9,12 @@ import { InputNumber } from 'primereact/inputnumber';
 import { classNames } from 'primereact/utils';
 import useEmployeeForm from '../../../hooks/useEmployeeForm';
 
-const EmployeePage: React.FC<{}> = () => {
+const EmployeePage: React.FC = () => {
     const {
         isModalOpen: isAddEmployeeModalOpen,
         handleModalOpen: handleAddEmployeeModalOpen,
         handleModalClose: handleAddEmployeeModalClose,
         RenderModal: renderAddEmployeeModal,
-    } = useModal();
-    const {
-        isModalOpen: isAssignTruckModalOpen,
-        handleModalOpen: handleAssignTruckModalOpen,
-        handleModalClose: handleAssignTruckModalClose,
-        RenderModal: renderAssignTruckModal,
     } = useModal();
 
     const { onSubmit, errors, reset, handleSubmit, control } = useEmployeeForm({
@@ -28,24 +22,12 @@ const EmployeePage: React.FC<{}> = () => {
     });
 
     const getFormErrorMessage = (name: string) => {
-        //@ts-ignore
         return errors[name] ? (
-            //@ts-ignore
             <small className="p-error">{errors[name].message}</small>
         ) : (
             <small className="p-error">&nbsp;</small>
         );
     };
-
-    const AssignTruckModal = React.useMemo(() => (
-        <Modal
-            title="Assign truck"
-            onClose={handleAssignTruckModalClose}
-            type="button"
-            label="Assign"
-            icon="pi pi-truck"
-        ></Modal>
-    ));
 
     const EmployeeFormModal = React.useMemo(
         () =>
@@ -56,14 +38,13 @@ const EmployeePage: React.FC<{}> = () => {
                         handleAddEmployeeModalClose();
                         reset();
                     }}
-                    //@ts-ignore
-                    onConfirm={handleSubmit((data) => onSubmit(data))}
+                    onConfirm={handleSubmit((data) => data && onSubmit(data))}
                     type="submit"
                     label="Add"
                     icon="pi pi-plus"
                     renderFooter
                 >
-                    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+                    <form onSubmit={handleSubmit((data) => data && onSubmit(data))}>
                         <div className="flex flex-column gap-3 align-items-start">
                             <Controller
                                 name="firstName"
@@ -163,7 +144,6 @@ const EmployeePage: React.FC<{}> = () => {
     return (
         <div className="flex flex-column w-12 relative">
             {isAddEmployeeModalOpen && EmployeeFormModal}
-            {isAssignTruckModalOpen && AssignTruckModal}
             <ActionBar onAdd={handleAddEmployeeModalOpen} />
             <EmployeeGrid />
         </div>

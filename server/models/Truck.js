@@ -25,10 +25,6 @@ module.exports = (Sequelize, DataTypes) => {
                     is: /^[A-Za-z0-9]*$/,
                 },
             },
-            driverId: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
             techState: {
                 type: DataTypes.ENUM('available', 'serviced'),
             },

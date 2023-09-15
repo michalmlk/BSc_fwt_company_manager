@@ -1,4 +1,5 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request } from 'express';
+
 const cors = require('cors');
 const database = require('./models');
 const bodyParser = require('body-parser');
@@ -20,4 +21,4 @@ database.sequelize.sync().then((req: Request) => {
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
     });
-})
+});
