@@ -9,7 +9,7 @@ export enum Priority {
     MINOR = 'Minor',
     MEDIUM = 'Medium',
     HIGH = 'High',
-    BLOCKER = 'Blocker'
+    BLOCKER = 'Blocker',
 }
 
 export interface Checkpoint {
@@ -31,9 +31,9 @@ export interface Delivery {
 export interface Truck {
     id: number;
     model: string;
-    licencePlateNumber: string;
-    dateOfInsurance: Date;
-    dateOfTechReview: Date;
+    registrationNumber: string;
+    driverId?: number | undefined;
+    techState: TruckTechnicalState;
 }
 
 export interface Driver {
@@ -50,4 +50,9 @@ export enum DeliveryStatus {
     IN_PROGRESS = 'In progress',
     UNLOADED = 'Unloaded',
     FINALIZED = 'Finalized',
+}
+
+export enum TruckTechnicalState {
+    AVAILABLE = 'available',
+    SERVICE = 'service',
 }
