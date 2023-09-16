@@ -39,6 +39,7 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
             try {
                 await service.updateTruckAssignment(employee.id, selectedTruck.id);
                 await queryClient.invalidateQueries(['employees']);
+                await queryClient.invalidateQueries(['trucks']);
                 toast.success('Truck successfully updated.');
                 onClose();
             } catch (e) {
@@ -57,10 +58,11 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
                 selection={selectedTruck}
                 onSelectionChange={(e: DataTableSelectionChangeEvent<Truck>) => setSelectedTruck(e.value)}
             >
-                <Column field="id" header="Code" />
-                <Column field="model" header="Name" />
-                <Column field="registrationNumber" header="Category" />
-                <Column field="techState" header="Quantity" />
+                <Column field="id" header="Truck ID" />
+                <Column field="model" header="Model" />
+                <Column field="registrationNumber" header="Reg. number" />
+                <Column field="techState" header="Status" />
+                <Column field="EmployeeId" header="DriverId" />
             </DataTable>
             <ModalFooter
                 onClose={onClose}

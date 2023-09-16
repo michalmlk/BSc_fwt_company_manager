@@ -54,5 +54,5 @@ export enum DeliveryStatus {
 
 export enum TruckTechnicalState {
     AVAILABLE = 'available',
-    SERVICE = 'service',
+    SERVICE = 'serviced',
 }

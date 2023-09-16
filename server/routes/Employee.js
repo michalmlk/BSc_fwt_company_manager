@@ -1,5 +1,5 @@
 const express = require('express');
-const { Employee } = require('../models');
+const { Employee, Truck } = require('../models');
 
 const router = express.Router();
 
@@ -56,7 +56,10 @@ router.post('/updateEmployee/:id/truck', async (req, res) => {
         const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
         //TODO little hacky solution - fix
         await user.update({ truckId: Object.keys(req.body) });
+        const truck = await Truck.findOne({ where: { id: Object.keys(req.body) } });
+        await truck.update({ EmployeeId: parseInt(req.params.id) });
         await user.save();
+        await truck.save();
         res.status(200).json(user);
     } catch (e) {
         res.status(400);
