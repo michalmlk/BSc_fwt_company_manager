@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Truck, TruckTechnicalState } from '../../../Model';
-import { ManagerService } from '../../../services/ManagerService';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
+import format from 'date-fns/format';
 
 const MachineCard: React.FC = ({ machine }: { machine: Truck }) => {
     const footer = (
@@ -49,35 +48,11 @@ const MachineCard: React.FC = ({ machine }: { machine: Truck }) => {
                 </div>
                 <Card className="flex flex w-12" title="Details">
                     <p>Assigned employee: {machine.EmployeeId || 'none'}</p>
+                    <p>Next tech review: {format(new Date(machine.techReviewDate), 'yyyy-MM-dd')}</p>
                 </Card>
             </div>
         </Card>
     );
 };
 
-const MachinePark: React.FC = () => {
-    const service = new ManagerService();
-    const [machines, setMachines] = useState<Truck[]>([]);
-
-    const { data } = useQuery({
-        queryKey: ['trucks'],
-        queryFn: async (): Promise<Truck[] | undefined> => {
-            return await service.getAllTrucks();
-        },
-    });
-
-    useEffect(() => {
-        if (data) {
-            setMachines(data);
-            console.log(data);
-        }
-    }, [data]);
-
-    return (
-        <div className="flex justify-content-center gap-3 w-12 relative p-6">
-            {data && machines.map((d) => <MachineCard machine={d} key={d.id} />)}
-        </div>
-    );
-};
-
-export default MachinePark;
+export default MachineCard;

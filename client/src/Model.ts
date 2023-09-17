@@ -32,8 +32,9 @@ export interface Truck {
     id: number;
     model: string;
     registrationNumber: string;
-    EmployeeId: number | undefined;
+    EmployeeId: number | null;
     techState: TruckTechnicalState;
+    techReviewDate: Date | null;
 }
 
 export interface Driver {

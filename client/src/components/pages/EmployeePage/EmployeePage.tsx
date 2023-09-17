@@ -144,7 +144,7 @@ const EmployeePage: React.FC = () => {
     return (
         <div className="flex flex-column w-12 relative">
             {isAddEmployeeModalOpen && EmployeeFormModal}
-            <ActionBar onAdd={handleAddEmployeeModalOpen} />
+            <ActionBar onAdd={handleAddEmployeeModalOpen} icon="pi pi-plus" label="Add employee" />
             <EmployeeGrid />
         </div>
     );

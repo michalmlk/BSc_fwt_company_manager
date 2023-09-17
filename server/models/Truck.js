@@ -28,6 +28,10 @@ module.exports = (Sequelize, DataTypes) => {
             techState: {
                 type: DataTypes.ENUM('available', 'serviced', 'delivery'),
             },
+            techReviewDate: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
         },
         {
             timestamps: false,
