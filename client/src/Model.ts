@@ -32,7 +32,7 @@ export interface Truck {
     id: number;
     model: string;
     registrationNumber: string;
-    driverId?: number | undefined;
+    EmployeeId: number | undefined;
     techState: TruckTechnicalState;
 }
 
@@ -55,4 +55,5 @@ export enum DeliveryStatus {
 export enum TruckTechnicalState {
     AVAILABLE = 'available',
     SERVICE = 'serviced',
+    DELIVERY = 'delivery',
 }

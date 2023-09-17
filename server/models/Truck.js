@@ -26,13 +26,17 @@ module.exports = (Sequelize, DataTypes) => {
                 },
             },
             techState: {
-                type: DataTypes.ENUM('available', 'serviced'),
+                type: DataTypes.ENUM('available', 'serviced', 'delivery'),
             },
         },
         {
             timestamps: false,
         }
     );
+
+    Truck.associate = (models) => {
+        Truck.belongsTo(models.Employee);
+    };
 
     return Truck;
 };

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ManagerService } from '../../../services/ManagerService';
-import { Truck } from '../../../Model';
-import { Dropdown } from 'primereact/dropdown';
+import { Truck, TruckTechnicalState } from '../../../Model';
 import { Employee } from '../../../common/model';
 import { ModalFooter } from './Modal/Modal';
 import { toast } from 'react-toastify';
-import { DataTable, DataTableSelectionChangeEvent } from 'primereact/datatable';
+import { DataTable, DataTableDataSelectableEvent, DataTableSelectionChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClose: () => void }> = ({
@@ -27,8 +26,9 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
 
     useEffect(() => {
         if (data && employee) {
-            console.log(data);
-            setTrucks(data);
+            setTrucks(
+                data.filter((t) => t.techState === TruckTechnicalState.AVAILABLE && t.EmployeeId !== employee.id)
+            );
             setSelectedTruck(data.filter((t) => t.id == employee.truckId)[0]);
         }
     }, [data, employee]);
@@ -49,6 +49,11 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
         }
     };
 
+    const isSelectable = (data: Truck) =>
+        data.techState === TruckTechnicalState.AVAILABLE && data.id !== employee?.truckId;
+
+    const isRowSelectable = (e: DataTableDataSelectableEvent<Truck>) => isSelectable(e.data);
+
     return (
         <>
             <label htmlFor="employeeTruck">Available trucks</label>
@@ -57,6 +62,7 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
                 selectionMode="single"
                 selection={selectedTruck}
                 onSelectionChange={(e: DataTableSelectionChangeEvent<Truck>) => setSelectedTruck(e.value)}
+                isDataSelectable={isRowSelectable}
             >
                 <Column field="id" header="Truck ID" />
                 <Column field="model" header="Model" />

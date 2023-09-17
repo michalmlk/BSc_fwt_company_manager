@@ -1,5 +1,6 @@
 const express = require('express');
 const { Employee, Truck } = require('../models');
+const { sequelize } = require('../models/index');
 
 const router = express.Router();
 
@@ -53,17 +54,26 @@ router.put('/updateEmployee/:id', async (req, res) => {
 
 router.post('/updateEmployee/:id/truck', async (req, res) => {
     try {
-        const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
-        //TODO little hacky solution - fix
-        await user.update({ truckId: Object.keys(req.body) });
-        const truck = await Truck.findOne({ where: { id: Object.keys(req.body) } });
-        await truck.update({ EmployeeId: parseInt(req.params.id) });
-        await user.save();
-        await truck.save();
-        res.status(200).json(user);
+        await sequelize.transaction(async function (transaction) {
+            const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
+            if (user.truckId) {
+                const usersTruck = await Truck.findOne({ where: { EmployeeId: user.id } });
+                await usersTruck.update({ EmployeeId: null }, { transaction });
+            }
+            await user.update({ truckId: Object.keys(req.body) }, { transaction });
+
+            const truck = await Truck.findOne({ where: { id: Object.keys(req.body) } });
+            await truck.update({ EmployeeId: parseInt(req.params.id) }, { transaction });
+
+            await user.save();
+            await truck.save();
+            res.status(200).json(user);
+
+            return user;
+        });
+        console.log('Success');
     } catch (e) {
-        res.status(400);
-        console.log('Failed to update truck assignment.');
+        console.log('Error:', e.message);
     }
 });
 
