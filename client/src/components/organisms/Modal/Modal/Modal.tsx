@@ -13,11 +13,23 @@ interface ModalProps {
     onConfirm?: () => void;
     children?: React.ReactNode;
     disabled?: boolean;
+    classNames?: string;
 }
 
-const Modal = ({ title, children, type, onClose, onConfirm, label, disabled, icon, renderFooter }: ModalProps) => {
+const Modal = ({
+    title,
+    children,
+    type,
+    onClose,
+    onConfirm,
+    label,
+    disabled,
+    icon,
+    renderFooter,
+    classNames,
+}: ModalProps) => {
     return ReactDOM.createPortal(
-        <StyledCard className="flex flex-column px-2 py-2 w-6" title={title}>
+        <StyledCard className={`flex flex-column px-2 py-2 ${classNames}`} title={title}>
             {children}
             {renderFooter && (
                 <ModalFooter
@@ -34,7 +46,7 @@ const Modal = ({ title, children, type, onClose, onConfirm, label, disabled, ico
     );
 };
 
-export const ModalFooter: ({
+export const ModalFooter = ({
     onClose,
     onConfirm,
     icon,
@@ -48,7 +60,7 @@ export const ModalFooter: ({
     label: string;
     disabled: boolean;
     type: 'button' | 'submit';
-}) => void = ({ onClose, onConfirm, icon, label, disabled, type }) => (
+}) => (
     <div className="flex w-12 justify-content-between py-2">
         <Button icon="pi pi-times" label="Cancel" onClick={onClose} rounded outlined severity="secondary" />
         <Button icon={icon} type={type} onClick={onConfirm} rounded label={label} disabled={disabled} />

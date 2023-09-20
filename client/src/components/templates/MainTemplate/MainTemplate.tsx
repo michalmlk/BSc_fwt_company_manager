@@ -7,12 +7,11 @@ import { Outlet } from 'react-router-dom';
 const MainTemplate: React.FC = () => {
     return (
         <>
-            <ToastContainer />
             <PageWrapper>
+                <ToastContainer />
                 <Navbar />
                 <Outlet />
             </PageWrapper>
-            ł
         </>
     );
 };

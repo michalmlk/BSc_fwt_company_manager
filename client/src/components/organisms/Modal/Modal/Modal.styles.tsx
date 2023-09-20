@@ -6,4 +6,5 @@ export const StyledCard = styled(Card)`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    max-width: 1280px;
 `;

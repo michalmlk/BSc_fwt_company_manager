@@ -55,7 +55,13 @@ router.put('/updateEmployee/:id', async (req, res) => {
 router.post('/updateEmployee/:id/truck', async (req, res) => {
     try {
         await sequelize.transaction(async function (transaction) {
-            const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } });
+            const prevOwner = await Employee.findOne({ where: { truckId: Object.keys(req.body) } }); //tu szukamy prev-ownera
+            if (prevOwner) {
+                //jezeli jest to aktualizujemy jego ciezarowke na null
+                await prevOwner.update({ truckId: null }, { transaction });
+                await prevOwner.save(); //save
+            }
+            const user = await Employee.findOne({ where: { id: parseInt(req.params.id) } }); //biezacy user
             if (user.truckId) {
                 const usersTruck = await Truck.findOne({ where: { EmployeeId: user.id } });
                 await usersTruck.update({ EmployeeId: null }, { transaction });
@@ -64,11 +70,9 @@ router.post('/updateEmployee/:id/truck', async (req, res) => {
 
             const truck = await Truck.findOne({ where: { id: Object.keys(req.body) } });
             await truck.update({ EmployeeId: parseInt(req.params.id) }, { transaction });
-
             await user.save();
             await truck.save();
             res.status(200).json(user);
-
             return user;
         });
         console.log('Success');

@@ -66,7 +66,7 @@ export class ManagerService {
             console.log('Fetching trucks...');
             const { data } = await axios.get('http://localhost:3001/truck/getAllTrucks');
             return data;
-        } catch (e) {
+        } catch (e: any) {
             console.log(`Failed to fetching trucks: ${e.message}`);
         }
     }

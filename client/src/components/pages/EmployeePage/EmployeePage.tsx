@@ -43,9 +43,10 @@ const EmployeePage: React.FC = () => {
                     label="Add"
                     icon="pi pi-plus"
                     renderFooter
+                    classNames="w-4"
                 >
                     <form onSubmit={handleSubmit((data) => data && onSubmit(data))}>
-                        <div className="flex flex-column gap-3 align-items-start">
+                        <div className="flex flex-column gap-1">
                             <Controller
                                 name="firstName"
                                 control={control}
@@ -56,7 +57,7 @@ const EmployeePage: React.FC = () => {
                                             name={field.name}
                                             value={field.value}
                                             onChange={field.onChange}
-                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            className={classNames({ 'p-invalid': fieldState.error, 'w-12': true })}
                                             placeholder="First name"
                                         />
                                         {getFormErrorMessage(field.name)}
@@ -73,7 +74,7 @@ const EmployeePage: React.FC = () => {
                                             name={field.name}
                                             value={field.value}
                                             onChange={field.onChange}
-                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            className={classNames({ 'p-invalid': fieldState.error, 'w-12': true })}
                                             placeholder="Last name"
                                         />
                                         {getFormErrorMessage(field.name)}
@@ -94,7 +95,7 @@ const EmployeePage: React.FC = () => {
                                             onValueChange={(e) => field.onChange(e)}
                                             useGrouping={false}
                                             placeholder="Age"
-                                            inputClassName={classNames({ 'p-invalid': fieldState.error })}
+                                            inputClassName={classNames({ 'p-invalid': fieldState.error, 'w-12': true })}
                                         />
                                         {getFormErrorMessage(field.name)}
                                     </>
@@ -110,7 +111,7 @@ const EmployeePage: React.FC = () => {
                                             name={field.name}
                                             value={field.value}
                                             onChange={field.onChange}
-                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            className={classNames({ 'p-invalid': fieldState.error, 'w-12': true })}
                                             placeholder="Phone number"
                                         />
                                         {getFormErrorMessage(field.name)}
@@ -127,7 +128,7 @@ const EmployeePage: React.FC = () => {
                                             name={field.name}
                                             value={field.value}
                                             onChange={field.onChange}
-                                            className={classNames({ 'p-invalid': fieldState.error })}
+                                            className={classNames({ 'p-invalid': fieldState.error, 'w-12': true })}
                                             placeholder="Email"
                                         />
                                         {getFormErrorMessage(field.name)}
