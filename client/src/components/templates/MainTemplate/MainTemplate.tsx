@@ -1,13 +1,19 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import Navbar from '../../shared/Navbar/Navbar';
 import { PageWrapper } from './MainTemplate.styles';
+import { ToastContainer } from 'react-toastify';
+import { Outlet } from 'react-router-dom';
 
-const MainTemplate: React.FC<PropsWithChildren> = ({ children }) => {
+const MainTemplate: React.FC = () => {
     return (
-        <PageWrapper>
-            <Navbar />
-            {children}
-        </PageWrapper>
+        <>
+            <ToastContainer />
+            <PageWrapper>
+                <Navbar />
+                <Outlet />
+            </PageWrapper>
+            ł
+        </>
     );
 };
 
