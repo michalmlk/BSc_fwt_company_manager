@@ -88,7 +88,7 @@ router.get('/getEmployee/:id', async (req, res) => {
                 id: parseInt(req.params.id),
             },
         });
-        return employee;
+        return res.status(200).json(employee);
     } catch (e) {
         console.log(`Cannot find employee with id: ${req.params.id}`);
     }

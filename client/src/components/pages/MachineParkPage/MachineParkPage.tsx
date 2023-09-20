@@ -23,7 +23,7 @@ const MachineParkPage: React.FC = () => {
     }, [data]);
 
     return (
-        <div className="flex flex-column w-12 relative">
+        <div className="flex flex-column w-12 relative px-6">
             <ActionBar onAdd={() => console.log('ok')} label="Add truck" icon="pi pi-plus" />
             <div className="flex gap-4 p-6">{data && machines.map((d) => <MachineCard machine={d} key={d.id} />)}</div>
         </div>

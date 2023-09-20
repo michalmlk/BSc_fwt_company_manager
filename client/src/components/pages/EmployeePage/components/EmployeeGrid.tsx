@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ManagerService } from '../../../../services/ManagerService';
 import { Employee } from '../../../../common/model';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,9 +13,10 @@ import { toast } from 'react-toastify';
 import useModal from '../../../../hooks/useModal';
 import Modal from '../../../organisms/Modal/Modal/Modal';
 import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModalContent';
+import { Truck } from '../../../../Model';
 
 const EmployeeGrid: React.FC = () => {
-    const managerService = new ManagerService();
+    const service = new ManagerService();
     const [employeeData, setEmployeeData] = useState<Employee>();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -24,6 +25,7 @@ const EmployeeGrid: React.FC = () => {
         currentDeliveryId: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+    const [trucks, setTrucks] = useState<Truck[] | undefined>();
 
     const {
         isModalOpen: isDeleteEmployeeModalOpen,
@@ -44,13 +46,28 @@ const EmployeeGrid: React.FC = () => {
     const { data } = useQuery({
         queryKey: ['employees'],
         queryFn: async (): Promise<Employee[] | undefined> => {
-            return await managerService.getAllEmployees();
+            return await service.getAllEmployees();
         },
     });
+
+    const trucksData = useQuery({
+        queryKey: ['trucks'],
+        queryFn: async (): Promise<Truck[] | undefined> => {
+            return await service.getAllTrucks();
+        },
+    });
+
+    useEffect(() => {
+        if (trucksData) {
+            setTrucks(trucksData.data);
+        }
+    }, [trucksData]);
 
     const queryClient = useQueryClient();
 
     const DeleteEmployeeModal = React.useMemo(() => {
+        const currentTruck = trucks && trucks.find((t) => t.id === employeeData?.truckId);
+
         return renderDeleteEmployeeModal(
             employeeData && (
                 <Modal
@@ -69,12 +86,17 @@ const EmployeeGrid: React.FC = () => {
                     <div>
                         <p>First name: {employeeData.firstName}</p>
                         <p>Last name: {employeeData.lastName}</p>
-                        <p>Truck ID: {employeeData.truckId || 'No truck assigned'}</p>
+                        <p>
+                            Truck ID:{' '}
+                            {currentTruck
+                                ? `${currentTruck?.model} (${currentTruck?.registrationNumber})`
+                                : 'No truck assigned'}
+                        </p>
                     </div>
                 </Modal>
             )
         );
-    }, [handleDeleteEmployeeModalClose]);
+    }, [handleDeleteEmployeeModalClose, trucks]);
 
     const AssignTruckModal = React.useMemo(() => {
         return renderAssignTruckModal(
@@ -118,8 +140,12 @@ const EmployeeGrid: React.FC = () => {
     };
 
     const truckColumnTemplate = (data: Employee): JSX.Element => {
-        return data.truckId ? (
-            <p>{data.truckId}</p>
+        //TODO to fix
+        const currentTruck = trucks && trucks.find((t) => t.id === data.truckId);
+        return currentTruck ? (
+            <p>
+                {currentTruck.model} ({currentTruck.registrationNumber})
+            </p>
         ) : (
             <Tag severity="danger" icon="pi pi-exclamation-circle" value="No truck" />
         );
@@ -148,7 +174,7 @@ const EmployeeGrid: React.FC = () => {
     const onRowDelete = async (id: number) => {
         const toastId = toast.loading('Deleting user...');
         try {
-            await managerService.deleteEmployee(id);
+            await service.deleteEmployee(id);
             toast.success('Employee successfully deleted');
             await queryClient.invalidateQueries(['employees']);
         } catch (e: any) {

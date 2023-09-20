@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Truck, TruckTechnicalState } from '../../../Model';
 import { Tag } from 'primereact/tag';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import format from 'date-fns/format';
+import { Employee } from '../../../common/model';
+import { ManagerService } from '../../../services/ManagerService';
+import { useQuery } from '@tanstack/react-query';
 
-const MachineCard: React.FC = ({ machine }: { machine: Truck }) => {
+const MachineCard: React.FC<{ machine: Truck }> = ({ machine }) => {
+    const [currentUser, setCurrentUser] = useState<Employee | undefined>();
+    const service = new ManagerService();
+
+    const { data } = useQuery({
+        queryKey: ['employees'],
+        queryFn: async (): Promise<Employee[] | undefined> => {
+            return await service.getAllEmployees();
+        },
+    });
+
+    useEffect(() => {
+        if (data) {
+            setCurrentUser(data.find((employee) => employee.truckId === machine.id));
+        }
+    }, [data]);
+
     const footer = (
         <div className="flex justify-content-between gap-3">
             <Tag
@@ -29,7 +48,7 @@ const MachineCard: React.FC = ({ machine }: { machine: Truck }) => {
 
     return (
         <Card
-            className="flex flex-column w-3"
+            className="flex flex-column w-4"
             title={machine.model}
             subTitle={machine.registrationNumber}
             footer={footer}
@@ -47,8 +66,14 @@ const MachineCard: React.FC = ({ machine }: { machine: Truck }) => {
                     />
                 </div>
                 <Card className="flex flex w-12" title="Details">
-                    <p>Assigned employee: {machine.EmployeeId || 'none'}</p>
-                    <p>Next tech review: {format(new Date(machine.techReviewDate), 'yyyy-MM-dd')}</p>
+                    <p>
+                        <strong>Assignment: </strong>
+                        {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Nobody'}
+                    </p>
+                    <p>
+                        <strong>Next tech review: </strong>
+                        {format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}
+                    </p>
                 </Card>
             </div>
         </Card>
