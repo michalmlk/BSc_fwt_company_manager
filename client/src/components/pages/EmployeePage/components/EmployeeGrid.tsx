@@ -12,7 +12,7 @@ import { Button } from 'primereact/button';
 import { toast } from 'react-toastify';
 import useModal from '../../../../hooks/useModal';
 import Modal from '../../../organisms/Modal/Modal/Modal';
-import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModalContent';
+import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModal/AssignTruckModalContent';
 import { Truck } from '../../../../Model';
 
 const EmployeeGrid: React.FC = () => {

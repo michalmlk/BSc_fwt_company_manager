@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ManagerService } from '../../../services/ManagerService';
-import { Truck, TruckTechnicalState } from '../../../Model';
-import { Employee } from '../../../common/model';
-import { ModalFooter } from './Modal/Modal';
+import { ManagerService } from '../../../../services/ManagerService';
+import { Truck, TruckTechnicalState } from '../../../../Model';
+import { Employee } from '../../../../common/model';
+import { ModalFooter } from '../Modal/Modal';
 import { toast } from 'react-toastify';
 import { DataTable, DataTableDataSelectableEvent, DataTableSelectionChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import useModal from '../../../../hooks/useModal';
 
 const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClose: () => void }> = ({
     employee,
@@ -60,7 +61,7 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
             <DataTable
                 value={trucks!}
                 selectionMode="single"
-                selection={selectedTruck}
+                selection={selectedTruck!}
                 onSelectionChange={(e: DataTableSelectionChangeEvent<Truck[]>) => setSelectedTruck(e.value)}
                 isDataSelectable={isRowSelectable}
             >

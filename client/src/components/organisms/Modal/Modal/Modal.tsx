@@ -6,10 +6,10 @@ import { StyledCard } from './Modal.styles';
 interface ModalProps {
     title: string;
     onClose: () => void;
-    type: 'button' | 'submit';
-    label: string;
-    icon: string;
     renderFooter: boolean;
+    type?: 'button' | 'submit';
+    label?: string;
+    icon?: string;
     onConfirm?: () => void;
     children?: React.ReactNode;
     disabled?: boolean;
@@ -34,10 +34,10 @@ const Modal = ({
             {renderFooter && (
                 <ModalFooter
                     onClose={onClose}
-                    icon={icon}
-                    type={type}
+                    icon={icon!}
+                    type={type!}
                     disabled={!!disabled}
-                    label={label}
+                    label={label!}
                     onConfirm={onConfirm}
                 />
             )}
