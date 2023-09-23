@@ -8,12 +8,14 @@ import { toast } from 'react-toastify';
 import { DataTable, DataTableDataSelectableEvent, DataTableSelectionChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import useModal from '../../../../hooks/useModal';
+import {TruckService} from "../../../../services/TruckService";
 
 const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClose: () => void }> = ({
     employee,
     onClose,
 }) => {
     const service = new ManagerService();
+    const truckService = new TruckService();
     const [trucks, setTrucks] = useState<Truck[]>([]);
     const [selectedTruck, setSelectedTruck] = useState<Truck | undefined>(undefined);
     const queryClient = useQueryClient();
@@ -21,7 +23,7 @@ const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClos
     const { data } = useQuery({
         queryKey: ['trucks'],
         queryFn: async (): Promise<Truck[] | undefined> => {
-            return await service.getAllTrucks();
+            return await truckService.getAllTrucks();
         },
     });
 

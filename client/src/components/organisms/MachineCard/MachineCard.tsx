@@ -48,7 +48,7 @@ const MachineCard: React.FC<{ machine: Truck }> = ({ machine }) => {
 
     return (
         <Card
-            className="flex flex-column w-4"
+            className="flex flex-column w-25rem"
             title={machine.model}
             subTitle={machine.registrationNumber}
             footer={footer}

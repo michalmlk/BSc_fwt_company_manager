@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { EmployeeSchema } from '../common/model';
 import { Employee } from '../common/model';
-import { Truck } from '../Model';
 
 export class ManagerService {
     async getEmployee(id: number): Promise<EmployeeSchema | undefined> {
@@ -59,16 +58,6 @@ export class ManagerService {
             currentDeliveryId: currentDeliveryId || undefined,
             truckId: truckId || undefined,
         });
-    }
-
-    async getAllTrucks(): Promise<Truck[] | undefined> {
-        try {
-            console.log('Fetching trucks...');
-            const { data } = await axios.get('http://localhost:3001/truck/getAllTrucks');
-            return data;
-        } catch (e: any) {
-            console.log(`Failed to fetching trucks: ${e.message}`);
-        }
     }
 
     async updateTruckAssignment(id: number, truckId: number): Promise<void> {

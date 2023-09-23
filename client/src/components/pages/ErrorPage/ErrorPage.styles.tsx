@@ -6,7 +6,6 @@ export const PageWrapper = styled.div`
   height: 100vh;
   justify-content: center;
   align-items: center;
-
   color: #1a1a1a;
 
   h1, h1>.pi {

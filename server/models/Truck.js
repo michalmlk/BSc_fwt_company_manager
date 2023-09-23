@@ -5,10 +5,6 @@ module.exports = (Sequelize, DataTypes) => {
             id: {
                 primaryKey: true,
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notEmpty: true,
-                },
             },
             model: {
                 type: DataTypes.STRING,

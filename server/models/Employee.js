@@ -1,5 +1,4 @@
 module.exports = (Sequelize, DataTypes) => {
-    // const Truck = require('./Truck');
     const Employee = Sequelize.define('Employee', {
         firstName: {
             type: DataTypes.STRING,

@@ -14,9 +14,11 @@ import useModal from '../../../../hooks/useModal';
 import Modal from '../../../organisms/Modal/Modal/Modal';
 import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModal/AssignTruckModalContent';
 import { Truck } from '../../../../Model';
+import { TruckService } from '../../../../services/TruckService';
 
 const EmployeeGrid: React.FC = () => {
     const service = new ManagerService();
+    const truckService = new TruckService();
     const [employeeData, setEmployeeData] = useState<Employee>();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -53,7 +55,7 @@ const EmployeeGrid: React.FC = () => {
     const trucksData = useQuery({
         queryKey: ['trucks'],
         queryFn: async (): Promise<Truck[] | undefined> => {
-            return await service.getAllTrucks();
+            return await truckService.getAllTrucks();
         },
     });
 

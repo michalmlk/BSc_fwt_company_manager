@@ -7,7 +7,10 @@ import React from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { truckSchema } from '../../../../common/model';
+import { TruckSchema, truckSchema } from '../../../../common/model';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TruckService } from '../../../../services/TruckService';
+import { toast } from 'react-toastify';
 
 const AddTruckModalContent: ({
     selectedTruck,
@@ -39,8 +42,30 @@ const AddTruckModalContent: ({
         );
     };
 
-    const onSubmit = (data) => {
-        data.value && console.log(data);
+    const truckService = new TruckService();
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        //ts-ignore
+        mutationFn: async (data: TruckSchema) => {
+            await truckService.addTruck(data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['trucks']);
+            reset();
+            onClose();
+        },
+    });
+
+    const onSubmit = async (data) => {
+        const toastId = toast.loading('Adding truck...');
+        try {
+            await mutation.mutateAsync(data);
+            toast.success('Truck successfully added.');
+        } catch (e) {
+            toast.error('Error on adding truck action.');
+        }
+        toast.dismiss(toastId);
     };
 
     const techStates = [
@@ -127,20 +152,15 @@ const AddTruckModalContent: ({
                                 value={field.value}
                                 onChange={field.onChange}
                                 dateFormat="yy-mm-dd"
+                                showIcon
+                                showButtonBar
                                 className={classNames({ 'p-invalid': fieldState.error })}
                             />
                             {getFormErrorMessage(field.name)}
                         </>
                     )}
                 />
-                <ModalFooter
-                    onClose={onClose}
-                    onConfirm={() => console.log('abc')}
-                    icon="pi pi-plus"
-                    label="Add"
-                    disabled={false}
-                    type="submit"
-                />
+                <ModalFooter onClose={onClose} icon="pi pi-plus" label="Add" disabled={false} type="submit" />
             </form>
         </>
     );
