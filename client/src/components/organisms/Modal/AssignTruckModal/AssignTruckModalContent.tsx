@@ -7,24 +7,22 @@ import { ModalFooter } from '../Modal/Modal';
 import { toast } from 'react-toastify';
 import { DataTable, DataTableDataSelectableEvent, DataTableSelectionChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import useModal from '../../../../hooks/useModal';
-import {TruckService} from "../../../../services/TruckService";
+import { trucksLoader, trucksQuery } from '../../../../loaders/trucksLoader';
+import { useLoaderData } from 'react-router-dom';
 
 const AssignTruckModalContent: React.FC<{ employee: Employee | undefined; onClose: () => void }> = ({
     employee,
     onClose,
 }) => {
     const service = new ManagerService();
-    const truckService = new TruckService();
     const [trucks, setTrucks] = useState<Truck[]>([]);
     const [selectedTruck, setSelectedTruck] = useState<Truck | undefined>(undefined);
     const queryClient = useQueryClient();
 
+    const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof trucksLoader>>>;
     const { data } = useQuery({
-        queryKey: ['trucks'],
-        queryFn: async (): Promise<Truck[] | undefined> => {
-            return await truckService.getAllTrucks();
-        },
+        ...trucksQuery(),
+        initialData,
     });
 
     useEffect(() => {

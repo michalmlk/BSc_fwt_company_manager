@@ -1,12 +1,13 @@
 import { Truck } from '../Model';
 import { QueryClient } from '@tanstack/react-query';
-import { TruckService } from '../services/TruckService';
-
-const truckService = new TruckService();
+import axios from 'axios';
 
 export const trucksQuery = () => ({
     queryKey: ['trucks'],
-    queryFn: async (): Promise<Truck[] | undefined> => await truckService.getAllTrucks(),
+    queryFn: async (): Promise<Truck[] | undefined> => {
+        const { data } = await axios.get('http://localhost:3001/truck/getAllTrucks');
+        return data;
+    },
 });
 
 export const trucksLoader = (queryClient: QueryClient) => async () => {
