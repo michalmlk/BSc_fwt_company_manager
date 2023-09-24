@@ -1,4 +1,4 @@
-import { TruckTechnicalState, Truck } from '../../../../Model';
+import { Truck, TruckModalMode, TruckTechnicalState } from '../../../../Model';
 import { Controller, useForm } from 'react-hook-form';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
@@ -11,18 +11,22 @@ import { TruckSchema, truckSchema } from '../../../../common/model';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TruckService } from '../../../../services/TruckService';
 import { toast } from 'react-toastify';
+import { Button } from 'primereact/button';
 
 const AddTruckModalContent: ({
     selectedTruck,
     onClose,
+    mode,
 }: {
     selectedTruck: Truck | undefined;
     onClose: () => void;
-}) => void = ({ selectedTruck, onClose }) => {
+    mode: TruckModalMode;
+}) => void = ({ selectedTruck, onClose, mode }) => {
+    console.log(selectedTruck!.techState);
     const defaultValues = {
         model: selectedTruck ? selectedTruck.model : '',
         registrationNumber: selectedTruck ? selectedTruck.registrationNumber : '',
-        techState: selectedTruck ? selectedTruck.techState : '',
+        techState: selectedTruck ? selectedTruck.techState : TruckTechnicalState.AVAILABLE,
         techReviewDate: selectedTruck ? selectedTruck.techReviewDate : new Date(),
     };
 
@@ -48,7 +52,9 @@ const AddTruckModalContent: ({
     const mutation = useMutation({
         //ts-ignore
         mutationFn: async (data: TruckSchema) => {
-            await truckService.addTruck(data);
+            mode === TruckModalMode.CREATE
+                ? await truckService.addTruck(data)
+                : await truckService.updateTruck(data, selectedTruck!.id);
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['trucks']);
@@ -61,9 +67,9 @@ const AddTruckModalContent: ({
         const toastId = toast.loading('Adding truck...');
         try {
             await mutation.mutateAsync(data);
-            toast.success('Truck successfully added.');
+            toast.success(`Truck successfully ${mode === TruckModalMode.CREATE ? 'added' : 'updated'}.`);
         } catch (e) {
-            toast.error('Error on adding truck action.');
+            toast.error(`Error on ${mode === TruckModalMode.CREATE ? 'adding' : 'updating'} truck action.`);
         }
         toast.dismiss(toastId);
     };
@@ -160,7 +166,22 @@ const AddTruckModalContent: ({
                         </>
                     )}
                 />
-                <ModalFooter onClose={onClose} icon="pi pi-plus" label="Add" disabled={false} type="submit" />
+                {mode === TruckModalMode.CREATE ? (
+                    <ModalFooter onClose={onClose} icon="pi pi-plus" label="Add" disabled={false} type="submit" />
+                ) : (
+                    <div className="flex justify-content-between gap-2">
+                        <Button
+                            type="button"
+                            icon="pi pi-times"
+                            label="Cancel"
+                            severity="secondary"
+                            outlined
+                            onClick={onClose}
+                        />
+                        <Button type="button" icon="pi pi-trash" label="Delete" severity="danger" />
+                        <Button type="submit" icon="pi pi-check" label="Update" />
+                    </div>
+                )}
             </form>
         </>
     );

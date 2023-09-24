@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ActionBar } from '../../atoms/ActionBar';
 import MachineCard from '../../organisms/MachineCard/MachineCard';
@@ -7,6 +7,7 @@ import Modal from '../../organisms/Modal/Modal/Modal';
 import AddTruckModalContent from '../../organisms/Modal/AddTruckModal/AddTruckModalContent';
 import { trucksLoader, trucksQuery } from '../../../loaders/trucksLoader';
 import { useLoaderData } from 'react-router-dom';
+import { Truck, TruckModalMode } from '../../../Model';
 
 const MachineParkPage: React.FC = () => {
     const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof trucksLoader>>>;
@@ -14,6 +15,8 @@ const MachineParkPage: React.FC = () => {
         ...trucksQuery(),
         initialData,
     });
+
+    const [selectedTruck, setSelectedTruck] = useState<Truck | undefined>(undefined);
 
     const {
         isModalOpen: isAddTruckModalOpen,
@@ -30,18 +33,26 @@ const MachineParkPage: React.FC = () => {
     const AddTruckModal = useMemo(() => {
         return (
             <Modal title="Add truck" onClose={handleAddTruckModalClose} renderFooter={false} classNames="w-3">
-                <AddTruckModalContent selectedTruck={undefined} onClose={handleAddTruckModalClose} />
+                <AddTruckModalContent
+                    selectedTruck={undefined}
+                    onClose={handleAddTruckModalClose}
+                    mode={TruckModalMode.CREATE}
+                />
             </Modal>
         );
     }, [handleAddTruckModalClose]);
 
     const ManageTruckModal = useMemo(() => {
         return (
-            <Modal title="Manage truck" onClose={handleManageTruckModalClose} renderFooter classNames="w-3">
-                <h1>"MANAGEEEEEE"</h1>
+            <Modal title="Manage truck" onClose={handleManageTruckModalClose} renderFooter={false} classNames="w-3">
+                <AddTruckModalContent
+                    selectedTruck={selectedTruck}
+                    mode={TruckModalMode.EDIT}
+                    onClose={handleManageTruckModalClose}
+                />
             </Modal>
         );
-    }, [handleAddTruckModalClose]);
+    }, [handleAddTruckModalClose, selectedTruck]);
 
     return (
         <div className="flex flex-column w-full relative px-6">
@@ -51,7 +62,14 @@ const MachineParkPage: React.FC = () => {
             <div className="flex p-6 justify-content-center">
                 <div className="flex flex-wrap gap-4">
                     {machines.map((d) => (
-                        <MachineCard machine={d} key={d.id} onManage={handleManageTruckModalOpen} />
+                        <MachineCard
+                            machine={d}
+                            key={d.id}
+                            onManage={async () => {
+                                await setSelectedTruck(d);
+                                handleManageTruckModalOpen();
+                            }}
+                        />
                     ))}
                 </div>
             </div>

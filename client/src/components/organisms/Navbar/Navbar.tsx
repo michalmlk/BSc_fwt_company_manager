@@ -31,7 +31,6 @@ const Navbar: React.FC = () => {
             />
             <Button
                 icon="pi pi-cog"
-                rounded
                 severity="info"
                 aria-label="Settings"
                 onClick={() => navigateToPath('/settings')}

@@ -9,7 +9,7 @@ interface ActionBarProps {
 export const ActionBar: React.FC<ActionBarProps> = ({ onAdd, label, icon }) => {
     return (
         <div className="flex justify-content-end p-4">
-            <Button icon={icon} label={label} rounded onClick={onAdd} />
+            <Button icon={icon} label={label} onClick={onAdd} />
         </div>
     );
 };

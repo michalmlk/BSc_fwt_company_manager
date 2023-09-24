@@ -27,4 +27,18 @@ router.post('/addTruck', async (req, res) => {
     }
 });
 
+router.post(`/update/:id`, async (req, res) => {
+    const currentTruck = await Truck.findOne({ where: { id: parseInt(req.params.id) } });
+    try {
+        await currentTruck.update({
+            ...req.body,
+        });
+        await currentTruck.save();
+        res.status(201).json(currentTruck);
+        return currentTruck;
+    } catch (e) {
+        console.log('Error when truck update: ', e.message);
+    }
+});
+
 module.exports = router;

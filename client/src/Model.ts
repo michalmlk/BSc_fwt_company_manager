@@ -12,6 +12,11 @@ export enum Priority {
     BLOCKER = 'Blocker',
 }
 
+export enum TruckModalMode {
+    CREATE,
+    EDIT,
+}
+
 export interface Checkpoint {
     status: DeliveryStatus;
     date?: Date;

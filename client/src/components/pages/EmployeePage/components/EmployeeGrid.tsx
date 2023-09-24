@@ -176,10 +176,9 @@ const EmployeeGrid: React.FC = () => {
 
     const actionsTemplate = (data: Employee): JSX.Element => (
         <div className="flex gap-3 justify-content-end">
-            <Button icon="pi pi-file-edit" rounded text />
+            <Button icon="pi pi-file-edit" text />
             <Button
                 icon="pi pi-pencil"
-                rounded
                 text
                 onClick={() => {
                     setEmployeeData(data);
@@ -188,7 +187,6 @@ const EmployeeGrid: React.FC = () => {
             />
             <Button
                 icon="pi pi-truck"
-                rounded
                 text
                 onClick={() => {
                     setEmployeeData(data);
@@ -197,7 +195,6 @@ const EmployeeGrid: React.FC = () => {
             />
             <Button
                 icon="pi pi-trash"
-                rounded
                 text
                 onClick={() => {
                     setEmployeeData(data);
