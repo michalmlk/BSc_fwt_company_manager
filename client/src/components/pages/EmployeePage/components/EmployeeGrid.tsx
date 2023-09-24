@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ManagerService } from '../../../../services/ManagerService';
 import { Employee } from '../../../../common/model';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,21 +13,35 @@ import { toast } from 'react-toastify';
 import useModal from '../../../../hooks/useModal';
 import Modal from '../../../organisms/Modal/Modal/Modal';
 import AssignTruckModalContent from '../../../organisms/Modal/AssignTruckModal/AssignTruckModalContent';
-import { Truck } from '../../../../Model';
-import { TruckService } from '../../../../services/TruckService';
+import { useLoaderData } from 'react-router-dom';
+import { employeeQuery, employeesLoader } from '../../../../loaders/employeesLoader';
+import { trucksLoader, trucksQuery } from '../../../../loaders/trucksLoader';
 
 const EmployeeGrid: React.FC = () => {
     const service = new ManagerService();
-    const truckService = new TruckService();
+    const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
     const [employeeData, setEmployeeData] = useState<Employee>();
+    const queryClient = useQueryClient();
+
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         firstName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         lastName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         currentDeliveryId: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
-    const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
-    const [trucks, setTrucks] = useState<Truck[] | undefined>();
+    const initialEmployeeData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof employeesLoader>>>;
+
+    const initialTrucksData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof trucksLoader>>>;
+
+    const { data: employees } = useQuery({
+        ...employeeQuery(),
+        initialData: initialEmployeeData,
+    });
+
+    const { data: trucks } = useQuery({
+        ...trucksQuery(),
+        initialData: initialTrucksData,
+    });
 
     const {
         isModalOpen: isDeleteEmployeeModalOpen,
@@ -44,28 +58,6 @@ const EmployeeGrid: React.FC = () => {
         handleModalClose: handleAssignTruckModalClose,
         RenderModal: renderAssignTruckModal,
     } = useModal();
-
-    const { data } = useQuery({
-        queryKey: ['employees'],
-        queryFn: async (): Promise<Employee[] | undefined> => {
-            return await service.getAllEmployees();
-        },
-    });
-
-    const trucksData = useQuery({
-        queryKey: ['trucks'],
-        queryFn: async (): Promise<Truck[] | undefined> => {
-            return await truckService.getAllTrucks();
-        },
-    });
-
-    useEffect(() => {
-        if (trucksData) {
-            setTrucks(trucksData.data);
-        }
-    }, [trucksData]);
-
-    const queryClient = useQueryClient();
 
     const DeleteEmployeeModal = React.useMemo(() => {
         const currentTruck = trucks && trucks.find((t) => t.id === employeeData?.truckId);
@@ -105,9 +97,6 @@ const EmployeeGrid: React.FC = () => {
             <Modal
                 title="Assign truck"
                 onClose={handleAssignTruckModalClose}
-                onConfirm={() => {
-                    // handleAssignTruckModalClose();
-                }}
                 type="button"
                 label="Assign"
                 icon="pi pi-check"
@@ -222,24 +211,22 @@ const EmployeeGrid: React.FC = () => {
 
     return (
         <div className="flex flex-wrap w-12 gap-4 p-6">
-            {data && (
-                <DataTable
-                    value={data}
-                    style={{ width: '100%' }}
-                    header={() => renderHeader()}
-                    filters={filters}
-                    globalFilterFields={['firstName', 'lastName', 'phoneNumber', 'currentDeliveryId', 'truckId']}
-                >
-                    <Column field="firstName" header="First name" />
-                    <Column field="lastName" header="Last name" />
-                    <Column field="phoneNumber" header="Phone number" />
-                    <Column field="email" header="Email" />
-                    <Column field="truckId" header="Truck" body={truckColumnTemplate} />
-                    <Column field="currentDeliveryId" header="Delivery Id" body={deliveryColumnTemplate} />
-                    <Column field="currentDeliveryId" header="Status" body={statusColumnTemplate} />
-                    <Column body={actionsTemplate} />
-                </DataTable>
-            )}
+            <DataTable
+                value={employees!}
+                style={{ width: '100%' }}
+                header={() => renderHeader()}
+                filters={filters}
+                globalFilterFields={['firstName', 'lastName', 'phoneNumber', 'currentDeliveryId', 'truckId']}
+            >
+                <Column field="firstName" header="First name" />
+                <Column field="lastName" header="Last name" />
+                <Column field="phoneNumber" header="Phone number" />
+                <Column field="email" header="Email" />
+                <Column field="truckId" header="Truck" body={truckColumnTemplate} />
+                <Column field="currentDeliveryId" header="Delivery Id" body={deliveryColumnTemplate} />
+                <Column field="currentDeliveryId" header="Status" body={statusColumnTemplate} />
+                <Column body={actionsTemplate} />
+            </DataTable>
             {isDeleteEmployeeModalOpen && DeleteEmployeeModal}
             {isAssignTruckModalOpen && AssignTruckModal}
         </div>

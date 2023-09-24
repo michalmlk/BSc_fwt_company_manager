@@ -1,29 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Truck } from '../../../Model';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ActionBar } from '../../atoms/ActionBar';
 import MachineCard from '../../organisms/MachineCard/MachineCard';
 import useModal from '../../../hooks/useModal';
 import Modal from '../../organisms/Modal/Modal/Modal';
 import AddTruckModalContent from '../../organisms/Modal/AddTruckModal/AddTruckModalContent';
-import { TruckService } from '../../../services/TruckService';
+import { trucksLoader, trucksQuery } from '../../../loaders/trucksLoader';
+import { useLoaderData } from 'react-router-dom';
 
 const MachineParkPage: React.FC = () => {
-    const truckService = new TruckService();
-    const [machines, setMachines] = useState<Truck[]>([]);
-
-    const { data } = useQuery({
-        queryKey: ['trucks'],
-        queryFn: async (): Promise<Truck[] | undefined> => {
-            return await truckService.getAllTrucks();
-        },
+    const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof trucksLoader>>>;
+    const { data: machines } = useQuery({
+        ...trucksQuery(),
+        initialData,
     });
-
-    useEffect(() => {
-        if (data) {
-            setMachines(data);
-        }
-    }, [data]);
 
     const {
         isModalOpen: isAddTruckModalOpen,
@@ -44,7 +34,9 @@ const MachineParkPage: React.FC = () => {
             {isAddTruckModalOpen && AddTruckModal}
             <ActionBar onAdd={handleAddTruckModalOpen} label="Add truck" icon="pi pi-plus" />
             <div className="flex p-6 justify-content-center">
-                <div className="flex flex-wrap gap-4">{data && machines.map((d) => <MachineCard machine={d} key={d.id} />)}</div>
+                <div className="flex flex-wrap gap-4">
+                    {machines && machines.map((d) => <MachineCard machine={d} key={d.id} />)}
+                </div>
             </div>
         </div>
     );
