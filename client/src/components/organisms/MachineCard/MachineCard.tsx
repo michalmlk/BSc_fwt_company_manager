@@ -8,6 +8,7 @@ import { Employee } from '../../../common/model';
 import { useQuery } from '@tanstack/react-query';
 import { employeeQuery, employeesLoader } from '../../../loaders/employeesLoader';
 import { useLoaderData } from 'react-router-dom';
+import { StyledRow } from './MachineCard.styles';
 
 const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machine, onManage }) => {
     const [currentUser, setCurrentUser] = useState<Employee | undefined>();
@@ -51,7 +52,7 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                     ? 'In delivery'
                     : 'In service'}
             </Tag>
-            <Button label="Manage" icon="pi pi-check" severity="secondary" onClick={onManage} />
+            <Button label="Edit" icon="pi pi-pencil" severity="secondary" onClick={onManage} />
         </div>
     );
 
@@ -70,8 +71,21 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                         paddingBottom: '0.75rem',
                     }}
                 >
-                    <strong>Assignment: </strong>
-                    {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Nobody'}
+                    <div className="flex justify-content-between align-items-center">
+                        <StyledRow>
+                            Assignment:{' '}
+                            <strong>
+                                {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Nobody'}
+                            </strong>
+                        </StyledRow>
+                        <Button
+                            icon="pi pi-pencil"
+                            size="small"
+                            severity="secondary"
+                            text
+                            tooltip="Change assignment"
+                        />
+                    </div>
                 </p>
                 <p
                     style={{
@@ -79,8 +93,20 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                         paddingBottom: '0.75rem',
                     }}
                 >
-                    <strong>Next tech review: </strong>
-                    {format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}
+                    <div className="flex justify-content-between align-items-center">
+                        <StyledRow
+                            isDanger={new Date().getTime() - new Date(machine!.techReviewDate!).getTime() <= 604800}
+                        >
+                            Next tech review: <strong>{format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}</strong>
+                        </StyledRow>
+                        <Button
+                            icon="pi pi-pencil"
+                            size="small"
+                            severity="secondary"
+                            text
+                            tooltip="Update tech review"
+                        />
+                    </div>
                 </p>
             </div>
         </Card>

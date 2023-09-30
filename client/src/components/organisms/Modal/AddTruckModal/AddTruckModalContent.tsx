@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TruckService } from '../../../../services/TruckService';
 import { toast } from 'react-toastify';
 import { Button } from 'primereact/button';
+import format from 'date-fns/format';
 
 const AddTruckModalContent: ({
     selectedTruck,
@@ -22,12 +23,11 @@ const AddTruckModalContent: ({
     onClose: () => void;
     mode: TruckModalMode;
 }) => void = ({ selectedTruck, onClose, mode }) => {
-    console.log(selectedTruck!.techState);
     const defaultValues = {
         model: selectedTruck ? selectedTruck.model : '',
         registrationNumber: selectedTruck ? selectedTruck.registrationNumber : '',
         techState: selectedTruck ? selectedTruck.techState : TruckTechnicalState.AVAILABLE,
-        techReviewDate: selectedTruck ? selectedTruck.techReviewDate : new Date(),
+        techReviewDate: selectedTruck ? selectedTruck.techReviewDate : format(new Date(), 'yy-mm-dd'),
     };
 
     const {
@@ -155,7 +155,7 @@ const AddTruckModalContent: ({
                             <label htmlFor={field.name}>Next tech. review</label>
                             <Calendar
                                 inputId={field.name}
-                                value={field.value}
+                                value={field.value || new Date()}
                                 onChange={field.onChange}
                                 dateFormat="yy-mm-dd"
                                 showIcon
