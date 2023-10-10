@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button } from 'primereact/button';
-import { StyledCard } from './Modal.styles';
+import { StyledBackdrop, StyledCard } from './Modal.styles';
 
 interface ModalProps {
     title: string;
@@ -28,21 +28,26 @@ const Modal = ({
     renderFooter,
     classNames,
 }: ModalProps) => {
-    return ReactDOM.createPortal(
-        <StyledCard className={`flex flex-column px-2 py-2 ${classNames}`} title={title}>
-            {children}
-            {renderFooter && (
-                <ModalFooter
-                    onClose={onClose}
-                    icon={icon!}
-                    type={type!}
-                    disabled={!!disabled}
-                    label={label!}
-                    onConfirm={onConfirm}
-                />
+    return (
+        <>
+            {ReactDOM.createPortal(
+                <StyledCard className={`flex flex-column px-2 py-2 ${classNames}`} title={title}>
+                    {children}
+                    {renderFooter && (
+                        <ModalFooter
+                            onClose={onClose}
+                            icon={icon!}
+                            type={type!}
+                            disabled={!!disabled}
+                            label={label!}
+                            onConfirm={onConfirm}
+                        />
+                    )}
+                </StyledCard>,
+                document.getElementById('modal-root')!
             )}
-        </StyledCard>,
-        document.getElementById('modal-root')!
+            {ReactDOM.createPortal(<StyledBackdrop />, document.getElementById('modal-backdrop')!)}
+        </>
     );
 };
 

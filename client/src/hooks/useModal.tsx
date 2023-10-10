@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from 'react';
 
-const useModal = (isOpen: boolean = false) => {
+const useModal = (isOpen = false) => {
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(isOpen);
 
     const handleModalOpen = (): void => {
@@ -14,10 +14,12 @@ const useModal = (isOpen: boolean = false) => {
     useEffect(() => {
         if (isModalOpen) {
             document.getElementById('modal-backdrop')?.classList.add('modal-open');
+            document.getElementById('root')?.classList.add('root-with-modal')
         }
 
         return () => {
             document.getElementById('modal-backdrop')?.classList.remove('modal-open');
+            document.getElementById('root')?.classList.remove('root-with-modal');
         };
     }, [isModalOpen]);
 

@@ -35,26 +35,29 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
         </div>
     );
 
+    const isTechReviewOutdated: boolean = new Date(machine!.techReviewDate!).getTime() - new Date().getTime() < 0;
+
     const footer = (
         <div className="flex justify-content-between gap-3">
             <Tag
                 severity={
-                    machine.techState === TruckTechnicalState.AVAILABLE
+                    machine.techState === TruckTechnicalState.AVAILABLE && !isTechReviewOutdated
                         ? 'success'
                         : machine.techState === TruckTechnicalState.DELIVERY
                         ? 'info'
                         : 'danger'
                 }
             >
-                {machine.techState === TruckTechnicalState.AVAILABLE
+                {machine.techState === TruckTechnicalState.AVAILABLE && !isTechReviewOutdated
                     ? 'Available'
-                    : machine.techState === TruckTechnicalState.DELIVERY
+                    : machine.techState === TruckTechnicalState.DELIVERY && !isTechReviewOutdated
                     ? 'In delivery'
-                    : 'In service'}
+                    : !isTechReviewOutdated ? 'In service' : 'Tech review outdated.'}
             </Tag>
             <Button label="Edit" icon="pi pi-pencil" severity="secondary" onClick={onManage} />
         </div>
     );
+
 
     return (
         <Card
@@ -93,9 +96,12 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                         paddingBottom: '0.75rem',
                     }}
                 >
+                    {/*604800000*/}
                     <div className="flex justify-content-between align-items-center">
                         <StyledRow
-                            isDanger={new Date().getTime() - new Date(machine!.techReviewDate!).getTime() <= 604800}
+                            isWarning={
+                                new Date(machine!.techReviewDate!).getTime() - new Date().getTime() < 604800000}
+                            isCritical={isTechReviewOutdated}
                         >
                             Next tech review: <strong>{format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}</strong>
                         </StyledRow>

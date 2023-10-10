@@ -16,6 +16,12 @@
 
 #root {
     width: 100%;
+
+}
+
+#root.root-with-modal {
+    height: 100vh;
+    overflow: hidden;
 }
 
 a {
@@ -63,7 +69,7 @@ button:focus-visible {
 }
 
 .modal-open {
-    position: fixed;
+    position: absolute;
     width: 100%;
     top: 0;
     height: 100vh;
