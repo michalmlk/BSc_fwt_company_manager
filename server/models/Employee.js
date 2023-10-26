@@ -43,6 +43,9 @@ module.exports = (Sequelize, DataTypes) => {
         truckId: {
             type: DataTypes.INTEGER,
         },
-    })
+    });
+    Employee.associate = (models) => {
+        Employee.hasOne(models.Truck);
+    };
     return Employee;
 };

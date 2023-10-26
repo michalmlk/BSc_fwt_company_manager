@@ -5,10 +5,6 @@ module.exports = (Sequelize, DataTypes) => {
             id: {
                 primaryKey: true,
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    notEmpty: true,
-                },
             },
             model: {
                 type: DataTypes.STRING,
@@ -26,13 +22,21 @@ module.exports = (Sequelize, DataTypes) => {
                 },
             },
             techState: {
-                type: DataTypes.ENUM('available', 'serviced'),
+                type: DataTypes.ENUM('available', 'serviced', 'delivery'),
+            },
+            techReviewDate: {
+                type: DataTypes.DATE,
+                allowNull: true,
             },
         },
         {
             timestamps: false,
         }
     );
+
+    Truck.associate = (models) => {
+        Truck.belongsTo(models.Employee);
+    };
 
     return Truck;
 };

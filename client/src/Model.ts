@@ -12,6 +12,11 @@ export enum Priority {
     BLOCKER = 'Blocker',
 }
 
+export enum TruckModalMode {
+    CREATE,
+    EDIT,
+}
+
 export interface Checkpoint {
     status: DeliveryStatus;
     date?: Date;
@@ -32,8 +37,9 @@ export interface Truck {
     id: number;
     model: string;
     registrationNumber: string;
-    driverId?: number | undefined;
+    EmployeeId: number | null;
     techState: TruckTechnicalState;
+    techReviewDate: Date | null;
 }
 
 export interface Driver {
@@ -54,5 +60,6 @@ export enum DeliveryStatus {
 
 export enum TruckTechnicalState {
     AVAILABLE = 'available',
-    SERVICE = 'service',
+    SERVICE = 'serviced',
+    DELIVERY = 'delivery',
 }
