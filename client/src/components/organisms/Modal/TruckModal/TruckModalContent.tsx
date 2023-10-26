@@ -12,9 +12,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TruckService } from '../../../../services/TruckService';
 import { toast } from 'react-toastify';
 import { Button } from 'primereact/button';
-import format from 'date-fns/format';
 
-const AddTruckModalContent: ({
+const TruckModalContent: ({
     selectedTruck,
     onClose,
     mode,
@@ -27,7 +26,7 @@ const AddTruckModalContent: ({
         model: selectedTruck ? selectedTruck.model : '',
         registrationNumber: selectedTruck ? selectedTruck.registrationNumber : '',
         techState: selectedTruck ? selectedTruck.techState : TruckTechnicalState.AVAILABLE,
-        techReviewDate: selectedTruck ? selectedTruck.techReviewDate : format(new Date(), 'yy-mm-dd'),
+        techReviewDate: selectedTruck ? new Date(selectedTruck.techReviewDate) : new Date(),
     };
 
     const {
@@ -149,7 +148,7 @@ const AddTruckModalContent: ({
                 <Controller
                     name="techReviewDate"
                     control={control}
-                    rules={{ required: 'Date is required.' }}
+                    rules={{ required: mode === TruckModalMode.CREATE }}
                     render={({ field, fieldState }) => (
                         <>
                             <label htmlFor={field.name}>Next tech. review</label>
@@ -187,4 +186,4 @@ const AddTruckModalContent: ({
     );
 };
 
-export default AddTruckModalContent;
+export default TruckModalContent;

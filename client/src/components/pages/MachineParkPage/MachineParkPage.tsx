@@ -4,7 +4,7 @@ import { ActionBar } from '../../atoms/ActionBar';
 import MachineCard from '../../organisms/MachineCard/MachineCard';
 import useModal from '../../../hooks/useModal';
 import Modal from '../../organisms/Modal/Modal/Modal';
-import AddTruckModalContent from '../../organisms/Modal/AddTruckModal/AddTruckModalContent';
+import TruckModalContent from '../../organisms/Modal/TruckModal/TruckModalContent';
 import { trucksLoader, trucksQuery } from '../../../loaders/trucksLoader';
 import { useLoaderData } from 'react-router-dom';
 import { Truck, TruckModalMode } from '../../../Model';
@@ -33,7 +33,7 @@ const MachineParkPage: React.FC = () => {
     const AddTruckModal = useMemo(() => {
         return (
             <Modal title="Add truck" onClose={handleAddTruckModalClose} renderFooter={false} classNames="w-3">
-                <AddTruckModalContent
+                <TruckModalContent
                     selectedTruck={undefined}
                     onClose={handleAddTruckModalClose}
                     mode={TruckModalMode.CREATE}
@@ -45,7 +45,7 @@ const MachineParkPage: React.FC = () => {
     const ManageTruckModal = useMemo(() => {
         return (
             <Modal title="Manage truck" onClose={handleManageTruckModalClose} renderFooter={false} classNames="w-3">
-                <AddTruckModalContent
+                <TruckModalContent
                     selectedTruck={selectedTruck}
                     mode={TruckModalMode.EDIT}
                     onClose={handleManageTruckModalClose}

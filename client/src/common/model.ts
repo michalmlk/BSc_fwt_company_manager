@@ -24,7 +24,7 @@ export const truckSchema = z.object({
     model: z.string().min(1, { message: 'Model is required' }),
     registrationNumber: z.string().regex(new RegExp(/[A-Z]{4}[0-9]{4}/), { message: 'Registration number is invalid' }),
     techState: z.nativeEnum(TruckTechnicalState),
-    techReviewDate: z.date(),
+    techReviewDate: z.date().nullish(),
 });
 
 export type TruckSchema = z.infer<typeof truckSchema>;
