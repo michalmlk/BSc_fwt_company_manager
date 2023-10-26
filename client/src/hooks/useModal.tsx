@@ -14,12 +14,10 @@ const useModal = (isOpen = false) => {
     useEffect(() => {
         if (isModalOpen) {
             document.getElementById('modal-backdrop')?.classList.add('modal-open');
-            document.getElementById('root')?.classList.add('root-with-modal')
         }
 
         return () => {
             document.getElementById('modal-backdrop')?.classList.remove('modal-open');
-            document.getElementById('root')?.classList.remove('root-with-modal');
         };
     }, [isModalOpen]);
 

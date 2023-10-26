@@ -78,6 +78,20 @@ const TruckModalContent: ({
         { name: TruckTechnicalState.SERVICE, value: TruckTechnicalState.SERVICE },
     ];
 
+    const handleDeleteTruck = async (truckId: number): void => {
+        const toastId = toast.loading(`Deleting truck with id: ${truckId}`);
+        try {
+            await truckService.deleteTruck(truckId);
+            await queryClient.invalidateQueries(['trucks']);
+            toast.success('Truck successfully deleted.');
+            onClose();
+        } catch (e) {
+            toast.error('Failed to delete truck.');
+            console.log(e.message);
+        }
+        toast.dismiss(toastId);
+    };
+
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-1">
@@ -177,7 +191,13 @@ const TruckModalContent: ({
                             outlined
                             onClick={onClose}
                         />
-                        <Button type="button" icon="pi pi-trash" label="Delete" severity="danger" />
+                        <Button
+                            type="button"
+                            icon="pi pi-trash"
+                            label="Delete"
+                            severity="danger"
+                            onClick={() => handleDeleteTruck(selectedTruck!.id)}
+                        />
                         <Button type="submit" icon="pi pi-check" label="Update" />
                     </div>
                 )}

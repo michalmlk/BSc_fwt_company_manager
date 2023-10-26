@@ -23,4 +23,12 @@ export class TruckService {
             console.log(`Failed to update truck: ${e.message}`);
         }
     }
+
+    async deleteTruck(id: number): Promise<void> {
+        try {
+            await axios.post(`http://localhost:3001/truck/delete/${id}`);
+        } catch (e: any) {
+            throw e.message;
+        }
+    }
 }

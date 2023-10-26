@@ -12,7 +12,6 @@ const Navbar: React.FC = () => {
         { label: 'Transports', icon: 'pi pi-fw pi-calendar', command: () => navigateToPath('/home') },
         { label: 'Drivers', icon: 'pi pi-fw pi-id-card', command: () => navigateToPath('/employees') },
         { label: 'Machine Park', icon: 'pi pi-fw pi-truck', command: () => navigateToPath('/trucks') },
-        { label: 'Reports', icon: 'pi pi-fw pi-file', command: () => navigateToPath('/Reports') },
     ];
 
     const navigateToPath = (path: string) => {

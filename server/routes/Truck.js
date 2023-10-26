@@ -41,4 +41,18 @@ router.post(`/update/:id`, async (req, res) => {
     }
 });
 
+router.post('/delete/:id', async (req, res, ctx) => {
+    try {
+        await Truck.destroy({
+            where: {
+                id: req.params.id,
+            },
+        });
+        res.status(200).send('Truck successfully deleted');
+    } catch (e) {
+        res.status(500);
+        console.log(`Error: ${e.message}`);
+    }
+});
+
 module.exports = router;

@@ -52,12 +52,13 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                     ? 'Available'
                     : machine.techState === TruckTechnicalState.DELIVERY && !isTechReviewOutdated
                     ? 'In delivery'
-                    : !isTechReviewOutdated ? 'In service' : 'Tech review outdated.'}
+                    : !isTechReviewOutdated
+                    ? 'In service'
+                    : 'Tech review outdated.'}
             </Tag>
             <Button label="Edit" icon="pi pi-pencil" severity="secondary" onClick={onManage} />
         </div>
     );
-
 
     return (
         <Card
@@ -99,8 +100,7 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                     {/*604800000*/}
                     <div className="flex justify-content-between align-items-center">
                         <StyledRow
-                            isWarning={
-                                new Date(machine!.techReviewDate!).getTime() - new Date().getTime() < 604800000}
+                            isWarning={new Date(machine!.techReviewDate!).getTime() - new Date().getTime() < 604800000}
                             isCritical={isTechReviewOutdated}
                         >
                             Next tech review: <strong>{format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}</strong>
