@@ -6,8 +6,12 @@ export class TruckService {
     async addTruck(truckData: TruckSchema): Promise<void> {
         try {
             await axios.post('http://localhost:3001/truck/addTruck', {
+                id: Math.random() * 1000,
                 ...truckData,
-                techReviewDate: format(new Date(truckData.techReviewDate), 'yyyy-MM-dd'),
+                techReviewDate: format(
+                    new Date(truckData.techReviewDate),
+                    'yyyy-MM-dd'
+                ),
             });
         } catch (e: any) {
             console.log(`Adding truck failed: ${e.message}.`);
