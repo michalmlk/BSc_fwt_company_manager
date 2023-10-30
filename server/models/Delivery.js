@@ -56,9 +56,5 @@ module.exports = (Sequelize, DataTypes) => {
             timestamps: false,
         }
     );
-
-    Delivery.associate = (models) => {
-        Delivery.hasOne(models.Employee);
-    };
     return Delivery;
 };
