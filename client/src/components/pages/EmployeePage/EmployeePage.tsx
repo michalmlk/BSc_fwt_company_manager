@@ -2,7 +2,7 @@ import React from 'react';
 import useModal from '../../../hooks/useModal';
 import Modal from '../../organisms/Modal/Modal/Modal';
 import { ActionBar } from '../../atoms/ActionBar';
-import EmployeeGrid from './components/EmployeeGrid';
+import EmployeeGrid from '../../organisms/EmployeeGrid/EmployeeGrid';
 import { Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';

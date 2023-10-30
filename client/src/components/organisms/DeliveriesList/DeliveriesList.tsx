@@ -1,6 +1,5 @@
-import React from 'react';
-import { deliveries } from '../../../dummydata';
-import DeliveryItem from '../DeliveryItem/DeliveryItem';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 const DeliveriesListWrapper = styled.div`
@@ -11,11 +10,14 @@ const DeliveriesListWrapper = styled.div`
 `;
 
 const DeliveriesList: React.FC = () => {
+    useEffect(() => {
+        const data = fetch('http://localhost:3001/delivery/getDeliveriesData')
+            .then((d) => d.json())
+            .then((data) => console.log(data));
+    });
     return (
         <DeliveriesListWrapper>
-            {deliveries.map((delivery) => (
-                <DeliveryItem key={delivery.id} delivery={delivery} />
-            ))}
+            <h1>Hello</h1>
         </DeliveriesListWrapper>
     );
 };

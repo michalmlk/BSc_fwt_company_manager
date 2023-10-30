@@ -1,13 +1,13 @@
 import { Employee, employeeSchema } from '../common/model';
 import { toast } from 'react-toastify';
-import { ManagerService } from '../services/ManagerService';
+import { ManagerService } from '../services/EmployeeService';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 enum EmployeeFormMode {
     CREATE,
-    EDIT
+    EDIT,
 }
 
 const defaultValues = {
@@ -19,10 +19,14 @@ const defaultValues = {
 };
 
 const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
-
     const managerService = new ManagerService();
     const queryClient = useQueryClient();
-    const { reset, formState: { errors }, control, handleSubmit } = useForm({ defaultValues, resolver: zodResolver(employeeSchema), reValidateMode: 'onChange' });
+    const {
+        reset,
+        formState: { errors },
+        control,
+        handleSubmit,
+    } = useForm({ defaultValues, resolver: zodResolver(employeeSchema), reValidateMode: 'onChange' });
 
     let mode = 0;
 
@@ -51,14 +55,15 @@ const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
             toast.dismiss(toastId);
         }
         onClose();
-    }
+    };
 
     return {
         onSubmit,
         errors,
         control,
-        reset, handleSubmit
-    }
-}
+        reset,
+        handleSubmit,
+    };
+};
 
 export default useEmployeeForm;

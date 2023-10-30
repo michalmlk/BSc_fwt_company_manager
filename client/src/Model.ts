@@ -1,10 +1,3 @@
-export interface Report {
-    date: Date;
-    comment: string;
-    priority: Priority;
-    driver: Driver;
-}
-
 export enum Priority {
     MINOR = 'Minor',
     MEDIUM = 'Medium',
@@ -18,19 +11,8 @@ export enum TruckModalMode {
 }
 
 export interface Checkpoint {
-    status: DeliveryStatus;
+    step: DeliveryStep;
     date?: Date;
-}
-
-export interface Delivery {
-    id: number;
-    product: string;
-    destination: string;
-    deadline: Date;
-    status: DeliveryStatus;
-    driver: Driver;
-    reports: Array<Report>;
-    history: Array<Checkpoint>;
 }
 
 export interface Truck {
@@ -42,24 +24,16 @@ export interface Truck {
     techReviewDate: Date | null;
 }
 
-export interface Driver {
-    id: number;
-    firstName: string;
-    lastName: string;
-    truck: Truck;
-    isBusy: boolean;
-}
-
-export enum DeliveryStatus {
-    STARTED = 'Started',
-    LOADED = 'Loaded',
-    IN_PROGRESS = 'In progress',
-    UNLOADED = 'Unloaded',
-    FINALIZED = 'Finalized',
-}
-
 export enum TruckTechnicalState {
     AVAILABLE = 'available',
     SERVICE = 'serviced',
     DELIVERY = 'delivery',
+}
+
+export enum DeliveryStep {
+    STARTED = 'started',
+    LOADED = 'loaded',
+    IN_PROGRESS = 'in_progress',
+    UNLOADED = 'unloaded',
+    FINALIZED = 'finalized',
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ManagerService } from '../../../../services/ManagerService';
+import { ManagerService } from '../../../../services/EmployeeService';
 import { Truck, TruckTechnicalState } from '../../../../Model';
 import { Employee } from '../../../../common/model';
 import { ModalFooter } from '../Modal/Modal';

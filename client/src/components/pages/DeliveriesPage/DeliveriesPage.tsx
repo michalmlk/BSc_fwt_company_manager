@@ -1,7 +1,7 @@
 import React from 'react';
-import DeliveriesList from "../../organisms/DeliveriesList/DeliveriesList";
+import DeliveriesList from '../../organisms/DeliveriesList/DeliveriesList';
 
-const Dashboard: React.FC = () => {
+const DeliveriesPage: React.FC = () => {
     return (
         <div className="flex flex-column w-12 p-6">
             <h1>Your deliveries:</h1>
@@ -10,4 +10,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default DeliveriesPage;

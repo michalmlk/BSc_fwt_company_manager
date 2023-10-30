@@ -24,15 +24,9 @@ const TruckModalContent: ({
 }) => void = ({ selectedTruck, onClose, mode }) => {
     const defaultValues = {
         model: selectedTruck ? selectedTruck.model : '',
-        registrationNumber: selectedTruck
-            ? selectedTruck.registrationNumber
-            : '',
-        techState: selectedTruck
-            ? selectedTruck.techState
-            : TruckTechnicalState.AVAILABLE,
-        techReviewDate: selectedTruck
-            ? new Date(selectedTruck.techReviewDate)
-            : new Date(),
+        registrationNumber: selectedTruck ? selectedTruck.registrationNumber : '',
+        techState: selectedTruck ? selectedTruck.techState : TruckTechnicalState.AVAILABLE,
+        techReviewDate: selectedTruck ? new Date(selectedTruck.techReviewDate) : new Date(),
     };
 
     const {
@@ -76,17 +70,9 @@ const TruckModalContent: ({
         const toastId = toast.loading('Adding truck...');
         try {
             await mutation.mutateAsync(data);
-            toast.success(
-                `Truck successfully ${
-                    mode === TruckModalMode.CREATE ? 'added' : 'updated'
-                }.`
-            );
+            toast.success(`Truck successfully ${mode === TruckModalMode.CREATE ? 'added' : 'updated'}.`);
         } catch (e) {
-            toast.error(
-                `Error on ${
-                    mode === TruckModalMode.CREATE ? 'adding' : 'updating'
-                } truck action.`
-            );
+            toast.error(`Error on ${mode === TruckModalMode.CREATE ? 'adding' : 'updating'} truck action.`);
         }
         toast.dismiss(toastId);
     };
@@ -118,10 +104,7 @@ const TruckModalContent: ({
 
     return (
         <>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-column gap-1"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-1">
                 {/*model*/}
                 <Controller
                     name="model"
@@ -156,9 +139,7 @@ const TruckModalContent: ({
                     rules={{ required: 'Reg. number is required.' }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>
-                                Registration number
-                            </label>
+                            <label htmlFor={field.name}>Registration number</label>
                             <InputText
                                 id={field.name}
                                 value={field.value}
@@ -215,9 +196,7 @@ const TruckModalContent: ({
                     rules={{ required: mode === TruckModalMode.CREATE }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>
-                                Next tech. review
-                            </label>
+                            <label htmlFor={field.name}>Next tech. review</label>
                             <Calendar
                                 inputId={field.name}
                                 value={field.value || new Date()}
@@ -234,13 +213,7 @@ const TruckModalContent: ({
                     )}
                 />
                 {mode === TruckModalMode.CREATE ? (
-                    <ModalFooter
-                        onClose={onClose}
-                        icon="pi pi-plus"
-                        label="Add"
-                        disabled={false}
-                        type="submit"
-                    />
+                    <ModalFooter onClose={onClose} icon="pi pi-plus" label="Add" disabled={false} type="submit" />
                 ) : (
                     <div className="flex justify-content-between gap-2">
                         <Button
@@ -258,11 +231,7 @@ const TruckModalContent: ({
                             severity="danger"
                             onClick={() => handleDeleteTruck(selectedTruck!.id)}
                         />
-                        <Button
-                            type="submit"
-                            icon="pi pi-check"
-                            label="Update"
-                        />
+                        <Button type="submit" icon="pi pi-check" label="Update" />
                     </div>
                 )}
             </form>

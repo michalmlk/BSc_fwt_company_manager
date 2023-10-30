@@ -1,23 +1,23 @@
 {
-  "development": {
-    "username": "root",
-    "password": "Test*123",
-    "database": "bsc_michalme",
-    "host": "localhost",
-    "dialect": "mysql"
-  },
-  "test": {
-    "username": "root",
-    "password": "test123",
-    "database": "bsc_michalme",
-    "host": "localhost",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": "test123",
-    "database": "bsc_michalme",
-    "host": "localhost",
-    "dialect": "mysql"
-  }
+    "development": {
+        "username": "root",
+        "password": "Test*123",
+        "database": "bsc_michalme",
+        "host": "localhost",
+        "dialect": "mysql"
+    },
+    "test": {
+        "username": "root",
+        "password": "test123",
+        "database": "bsc_michalme",
+        "host": "localhost",
+        "dialect": "mysql"
+    },
+    "production": {
+        "username": "root",
+        "password": "test123",
+        "database": "bsc_michalme",
+        "host": "localhost",
+        "dialect": "mysql"
+    }
 }
