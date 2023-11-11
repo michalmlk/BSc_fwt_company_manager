@@ -3,6 +3,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useLoaderData } from 'react-router-dom';
 import { deliveriesLoader, deliveriesQuery } from '../../../loaders/deliveriesLoader';
+import DeliveryCard from '../DeliveryCard/DeliveryCard';
+import { Delivery } from '../../../common/model';
 
 const DeliveriesListWrapper = styled.div`
     display: flex;
@@ -17,7 +19,11 @@ const DeliveriesList: React.FC = () => {
         ...deliveriesQuery(),
         initialData,
     });
-    return <DeliveriesListWrapper></DeliveriesListWrapper>;
+    return (
+        <DeliveriesListWrapper>
+            {deliveries && deliveries.map((data: Delivery) => <DeliveryCard key={data.id} delivery={data} />)}
+        </DeliveriesListWrapper>
+    );
 };
 
 export default DeliveriesList;

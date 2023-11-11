@@ -15,6 +15,20 @@ router.get('/getAllTrucks', async (req, res) => {
     }
 });
 
+router.get('/get/:id', async (req, res) => {
+    try {
+        const truck = await Truck.findOne({
+            where: {
+                id: parseInt(req.params.id),
+            },
+        });
+        return res.status(200).json(truck);
+    } catch (e) {
+        res.status(401);
+        console.log(e.message);
+    }
+});
+
 router.post('/addTruck', async (req, res) => {
     const newTruck = await Truck.build(req.body);
 
