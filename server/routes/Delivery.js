@@ -4,7 +4,7 @@ const { sequelize } = require('../models/index');
 
 const router = express.Router();
 
-router.get('/getDeliveriesData', async (req, res) => {
+router.get('/getDeliveries', async (req, res) => {
     try {
         const data = await Delivery.findAll({
             raw: true,
