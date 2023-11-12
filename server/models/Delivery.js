@@ -43,13 +43,7 @@ module.exports = (Sequelize, DataTypes) => {
                 },
             },
             currentStep: {
-                type: DataTypes.ENUM(
-                    'started',
-                    'loaded',
-                    'in_progress',
-                    'unloaded',
-                    'finalized'
-                ),
+                type: DataTypes.INTEGER,
             },
         },
         {

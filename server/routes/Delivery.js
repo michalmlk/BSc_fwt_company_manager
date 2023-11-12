@@ -12,7 +12,22 @@ router.get('/getDeliveries', async (req, res) => {
         res.status(200).json(data);
     } catch (e) {
         res.status(401);
-        console.log(e.message);
+        throw new Error({ message: 'Failed to fetch deliveries.' });
+    }
+});
+
+router.post(`/updateStatus/:id`, async (req, res) => {
+    const delivery = await Delivery.findOne({ where: { id: req.params.id } });
+
+    try {
+        await delivery.update({
+            currentStep: req.body.index,
+        });
+        await delivery.save();
+        res.status(201).json(delivery);
+        return delivery;
+    } catch (e) {
+        throw new Error({ message: 'Failed to update status.' });
     }
 });
 

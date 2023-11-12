@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import validator from 'validator';
-import { DeliveryStep, TruckTechnicalState } from '../Model';
+import { TruckTechnicalState } from '../Model';
 
 // EMPLOYEE
 
@@ -45,7 +45,7 @@ export const deliverySchema = z.object({
     deadLine: z.date(),
     destination: z.string().min(1, { message: 'Destination is required.' }),
     startPoint: z.string().min(1, { message: 'Start point is required.' }),
-    currentStep: z.nativeEnum(DeliveryStep),
+    currentStep: z.number(),
 });
 
 export type DeliverySchema = z.infer<typeof deliverySchema>;
