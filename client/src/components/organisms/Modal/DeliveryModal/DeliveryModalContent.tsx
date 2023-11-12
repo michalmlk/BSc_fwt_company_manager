@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, ModalMode, TruckTechnicalState } from '../../../../Model';
+import { ModalMode } from '../../../../Model';
 import { Controller, useForm } from 'react-hook-form';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
@@ -7,27 +7,26 @@ import { ModalFooter } from '../Modal/Modal';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TruckSchema, truckSchema } from '../../../../common/model';
+import { Delivery, DeliverySchema, deliverySchema } from '../../../../common/model';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TruckService } from '../../../../services/TruckService';
+import { DeliveryService } from '../../../../services/DeliveriesService';
 import { toast } from 'react-toastify';
 import { Button } from 'primereact/button';
 
-const TruckModalContent: ({
-    selectedTruck,
+const DeliveryModalContent: ({
+    selectedDelivery,
     onClose,
     mode,
 }: {
-    selectedTruck: Truck | undefined;
+    selectedDelivery: Delivery | undefined;
     onClose: () => void;
     mode: ModalMode;
-}) => void = ({ selectedTruck, onClose, mode }) => {
+}) => void = ({ selectedDelivery, onClose, mode }): JSX.Element => {
     const defaultValues = {
-        model: selectedTruck ? selectedTruck.model : '',
-        registrationNumber: selectedTruck ? selectedTruck.registrationNumber : '',
-        techState: selectedTruck ? selectedTruck.techState : TruckTechnicalState.AVAILABLE,
-        techReviewDate:
-            selectedTruck && selectedTruck.techReviewDate ? new Date(selectedTruck.techReviewDate) : new Date(),
+        product: selectedDelivery ? selectedDelivery.product : '',
+        deadLine: selectedDelivery ? new Date(selectedDelivery.deadLine) : new Date(),
+        destination: selectedDelivery ? selectedDelivery.destination : '',
+        startPoint: selectedDelivery ? selectedDelivery.startPoint : '',
     };
 
     const {
@@ -38,7 +37,7 @@ const TruckModalContent: ({
         reset,
     } = useForm({
         defaultValues,
-        resolver: zodResolver(truckSchema),
+        resolver: zodResolver(deliverySchema),
         reValidateMode: 'onChange',
     });
 
@@ -50,70 +49,45 @@ const TruckModalContent: ({
         );
     };
 
-    const truckService = new TruckService();
+    const service = new DeliveryService();
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
         //ts-ignore
-        mutationFn: async (data: TruckSchema) => {
-            mode === ModalMode.CREATE
-                ? await truckService.addTruck(data)
-                : await truckService.updateTruck(data, selectedTruck!.id);
+        mutationFn: async (data: DeliverySchema) => {
+            // mode === ModalMode.CREATE
+            //     ? await service.createDelivery(data)
+            //     : await service.updateDelivery(data, selectedDelivery!.id);
+            console.log(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['trucks']);
+            queryClient.invalidateQueries(['deliveries']);
             reset();
             onClose();
         },
     });
 
     const onSubmit = async (data) => {
-        const toastId = toast.loading('Adding truck...');
+        const toastId = toast.loading('Creating delivery...');
         try {
             await mutation.mutateAsync(data);
-            toast.success(`Truck successfully ${mode === ModalMode.CREATE ? 'added' : 'updated'}.`);
+            toast.success(`Delivery successfully ${mode === ModalMode.CREATE ? 'added' : 'updated'}.`);
         } catch (e) {
             toast.error(`Error on ${mode === ModalMode.CREATE ? 'adding' : 'updating'} truck action.`);
         }
         toast.dismiss(toastId);
     };
-
-    const techStates = [
-        {
-            name: TruckTechnicalState.AVAILABLE,
-            value: TruckTechnicalState.AVAILABLE,
-        },
-        {
-            name: TruckTechnicalState.SERVICE,
-            value: TruckTechnicalState.SERVICE,
-        },
-    ];
-
-    const handleDeleteTruck = async (truckId: number): void => {
-        const toastId = toast.loading(`Deleting truck with id: ${truckId}`);
-        try {
-            await truckService.deleteTruck(truckId);
-            await queryClient.invalidateQueries(['trucks']);
-            toast.success('Truck successfully deleted.');
-            onClose();
-        } catch (e) {
-            toast.error('Failed to delete truck.');
-            console.log(e.message);
-        }
-        toast.dismiss(toastId);
-    };
-
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-1">
-                {/*model*/}
+                {/* start point */}
                 <Controller
-                    name="model"
+                    name="startPoint"
                     control={control}
-                    rules={{ required: 'Model is required.' }}
+                    rules={{ required: 'Start point is required.' }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>Model</label>
+                            <label htmlFor={field.name}>Start point</label>
                             <InputText
                                 id={field.name}
                                 value={field.value}
@@ -121,7 +95,7 @@ const TruckModalContent: ({
                                     'p-invalid': fieldState.error,
                                 })}
                                 onChange={(e) => field.onChange(e.target.value)}
-                                placeholder="Model"
+                                placeholder="Start point"
                             />
                             <label
                                 htmlFor={field.name}
@@ -133,14 +107,14 @@ const TruckModalContent: ({
                         </>
                     )}
                 />
-                {/*reg. number*/}
+                {/* destination */}
                 <Controller
-                    name="registrationNumber"
+                    name="destination"
                     control={control}
-                    rules={{ required: 'Reg. number is required.' }}
+                    rules={{ required: 'Destination is required.' }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>Registration number</label>
+                            <label htmlFor={field.name}>Destination</label>
                             <InputText
                                 id={field.name}
                                 value={field.value}
@@ -148,7 +122,7 @@ const TruckModalContent: ({
                                     'p-invalid': fieldState.error,
                                 })}
                                 onChange={(e) => field.onChange(e.target.value)}
-                                placeholder="e.g. EXMPL1234"
+                                placeholder="Destination"
                             />
                             <label
                                 htmlFor={field.name}
@@ -160,25 +134,22 @@ const TruckModalContent: ({
                         </>
                     )}
                 />
-                {/* tech state*/}
+                {/*product*/}
                 <Controller
-                    name="techState"
+                    name="product"
                     control={control}
-                    rules={{ required: 'Technical state is required.' }}
+                    rules={{ required: 'Product is required.' }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>Tech. state</label>
-                            <Dropdown
+                            <label htmlFor={field.name}>Product</label>
+                            <InputText
                                 id={field.name}
                                 value={field.value}
-                                optionLabel="name"
-                                placeholder="Select technical state"
-                                options={techStates}
-                                focusInputRef={field.ref}
-                                onChange={(e) => field.onChange(e.value)}
                                 className={classNames({
                                     'p-invalid': fieldState.error,
                                 })}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                placeholder="Product"
                             />
                             <label
                                 htmlFor={field.name}
@@ -190,19 +161,19 @@ const TruckModalContent: ({
                         </>
                     )}
                 />
-                {/*tech review date*/}
+                {/*deadline*/}
                 <Controller
-                    name="techReviewDate"
+                    name="deadLine"
                     control={control}
                     rules={{ required: mode === ModalMode.CREATE }}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>Next tech. review</label>
+                            <label htmlFor={field.name}>Due date</label>
                             <Calendar
                                 inputId={field.name}
                                 value={field.value || new Date()}
                                 onChange={field.onChange}
-                                dateFormat="yy-mm-dd"
+                                dateFormat="dd-m-yy"
                                 showIcon
                                 showButtonBar
                                 className={classNames({
@@ -214,9 +185,9 @@ const TruckModalContent: ({
                     )}
                 />
                 {mode === ModalMode.CREATE ? (
-                    <ModalFooter onClose={onClose} icon="pi pi-plus" label="Add" disabled={false} type="submit" />
+                    <ModalFooter onClose={onClose} icon="pi pi-plus" label="Create" disabled={false} type="submit" />
                 ) : (
-                    <div className="flex justify-content-between gap-2">
+                    <div className="flex justify-content-between">
                         <Button
                             type="button"
                             icon="pi pi-times"
@@ -224,13 +195,6 @@ const TruckModalContent: ({
                             severity="secondary"
                             outlined
                             onClick={onClose}
-                        />
-                        <Button
-                            type="button"
-                            icon="pi pi-trash"
-                            label="Delete"
-                            severity="danger"
-                            onClick={() => handleDeleteTruck(selectedTruck!.id)}
                         />
                         <Button type="submit" icon="pi pi-check" label="Update" />
                     </div>
@@ -240,4 +204,4 @@ const TruckModalContent: ({
     );
 };
 
-export default TruckModalContent;
+export default DeliveryModalContent;

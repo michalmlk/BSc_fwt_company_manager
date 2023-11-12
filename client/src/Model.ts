@@ -1,4 +1,4 @@
-export enum TruckModalMode {
+export enum ModalMode {
     CREATE,
     EDIT,
 }

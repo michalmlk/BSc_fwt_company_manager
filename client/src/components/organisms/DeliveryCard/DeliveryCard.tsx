@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Delivery, Employee, EmployeeSchema, Truck } from '../../../common/model';
+import { Delivery, Employee, Truck } from '../../../common/model';
 import { Card } from 'primereact/card';
 import { ManagerService } from '../../../services/EmployeeService';
 import { TruckService } from '../../../services/TruckService';
@@ -16,7 +16,7 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
     const employeeService = new ManagerService();
     const truckService = new TruckService();
 
-    const [employee, setEmployee] = useState<EmployeeSchema>();
+    const [employee, setEmployee] = useState<Employee>();
     const [truck, setTruck] = useState<Truck>();
     const [isReadonly, setIsReadonly] = useState(true);
     const [activeIndex, setActiveIndex] = useState(currentStep);
@@ -70,7 +70,14 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
 
     return (
         <Card title={`Destination: ${destination}`}>
-            <DeliveryDetails deadLine={deadLine} startPoint={startPoint} currentStep={currentStep} product={product} />
+            <DeliveryDetails
+                deadLine={deadLine}
+                startPoint={startPoint}
+                currentStep={currentStep}
+                product={product}
+                employee={employee!}
+                truck={truck!}
+            />
             <StepsContainer>
                 <Steps
                     model={deliveryStatusItems}
@@ -81,6 +88,7 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
                 <Button
                     icon={isReadonly ? 'pi pi-pencil' : 'pi pi-check'}
                     tooltip="Change status"
+                    tooltipOptions={{ position: 'left' }}
                     onClick={() => (isReadonly ? handleToggleEditMode() : handleCommitStatusChange(activeIndex))}
                 />
             </StepsContainer>
