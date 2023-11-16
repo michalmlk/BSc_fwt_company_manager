@@ -1,35 +1,46 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { ModalMode } from '../../../../Model';
-import { Controller, useForm } from 'react-hook-form';
+import { ModalFooter } from '../Modal/Modal';
+import { DeliveryService } from '../../../../services/DeliveriesService';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ManagerService } from '../../../../services/EmployeeService';
+import { DeliverySchema, Employee } from '../../../../common/model';
+import { toast } from 'react-toastify';
+import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
-import { ModalFooter } from '../Modal/Modal';
-import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Delivery, DeliverySchema, Employee, deliverySchema } from '../../../../common/model';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { DeliveryService } from '../../../../services/DeliveriesService';
-import { toast } from 'react-toastify';
-import { Button } from 'primereact/button';
-import { ManagerService } from '../../../../services/EmployeeService';
+import { Dropdown } from 'primereact/dropdown';
 
-const DeliveryModalContent: ({
-    selectedDelivery,
-    onClose,
-    mode,
-}: {
-    selectedDelivery: Delivery | undefined;
+type DeliveryModalContentProps = {
     onClose: () => void;
     mode: ModalMode;
-}) => void = ({ onClose, mode }): JSX.Element => {
-    const selectedDelivery = {};
-    const defaultValues = {
-        product: selectedDelivery ? selectedDelivery.product : '',
-        deadLine: selectedDelivery && selectedDelivery.deadLine ? new Date(selectedDelivery.deadLine) : new Date(),
-        destination: selectedDelivery ? selectedDelivery.destination : '',
-        startPoint: selectedDelivery ? selectedDelivery.startPoint : '',
-        employeeId: selectedDelivery ? selectedDelivery.employeeId : '',
+};
+
+const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClose }): JSX.Element => {
+    const label = mode === ModalMode.CREATE ? 'Create' : 'Confirm';
+    const icon = mode === ModalMode.CREATE ? 'pi pi-plus' : 'pi pi-check';
+
+    const service = new DeliveryService();
+    const employeeService = new ManagerService();
+    const queryClient = useQueryClient();
+
+    const [employees, setEmployees] = React.useState<Employee[]>();
+
+    React.useEffect(() => {
+        (async () => {
+            const data = await employeeService.getAllEmployees();
+            setEmployees(data);
+        })();
+    }, []);
+
+    const defaultValues: DeliverySchema = {
+        product: '',
+        deadLine: new Date(),
+        destination: '',
+        startPoint: '',
+        employeeId: 0,
+        currentStep: 0,
     };
 
     const {
@@ -37,218 +48,136 @@ const DeliveryModalContent: ({
         formState: { errors },
         handleSubmit,
         reset,
-    } = useForm({
-        defaultValues,
-        resolver: zodResolver(deliverySchema),
-        reValidateMode: 'onChange',
-    });
-
-    const getFormErrorMessage = (name) => {
-        return errors[name] ? (
-            <small className="p-error">{errors[name].message}</small>
-        ) : (
-            <small className="p-error">&nbsp;</small>
-        );
-    };
-
-    const service = new DeliveryService();
-    const queryClient = useQueryClient();
-    const employeeService = new ManagerService();
-
-    const [employees, setEmployees] = useState<Employee[]>();
-
-    useEffect(() => {
-        (async () => {
-            console.log('fetching');
-            const data = await employeeService.getAllEmployees();
-            setEmployees(data);
-        })();
-    }, []);
+    } = useForm(defaultValues);
 
     const mutation = useMutation({
-        //ts-ignore
         mutationFn: async (data: DeliverySchema) => {
-            console.log('test');
-            mode === ModalMode.CREATE
-                ? await service.createDelivery(data)
-                : await service.updateDelivery(data, selectedDelivery!.id);
+            await service.createDelivery(data);
         },
-        onSuccess: () => {
+        onSuccess: async () => {
             queryClient.invalidateQueries(['deliveries']);
             reset();
             onClose();
         },
     });
 
-    const onSubmit = async (data) => {
-        console.log('test onsubmit');
-        const toastId = toast.loading('Creating delivery...');
+    const onSubmit = async (data: any) => {
+        console.log(data);
+        const toastId = toast.loading('Creating delivery');
         try {
-            await mutation.mutateAsync(data);
-            toast.success(`Delivery successfully ${mode === ModalMode.CREATE ? 'created' : 'updated'}.`);
+            await mutation.mutateAsync({
+                ...data,
+                currentStep: 0,
+            });
+            toast.success('Delivery successfully created.');
         } catch (e) {
-            toast.error(`Error on ${mode === ModalMode.CREATE ? 'create' : 'updating'} action.`);
+            toast.error('Creation failed.');
         }
         toast.dismiss(toastId);
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-1">
-            {/* start point */}
-            <Controller
-                name="startPoint"
-                control={control}
-                rules={{ required: 'Start point is required.' }}
-                render={({ field, fieldState }) => (
-                    <>
-                        <label htmlFor={field.name}>Start point</label>
-                        <InputText
-                            id={field.name}
-                            value={field.value}
-                            className={classNames({
-                                'p-invalid': fieldState.error,
-                            })}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            placeholder="Start point"
-                        />
-                        <label
-                            htmlFor={field.name}
-                            className={classNames({
-                                'p-error': errors.value,
-                            })}
-                        />
-                        {getFormErrorMessage(field.name)}
-                    </>
-                )}
-            />
-            {/* destination */}
-            <Controller
-                name="destination"
-                control={control}
-                rules={{ required: 'Destination is required.' }}
-                render={({ field, fieldState }) => (
-                    <>
-                        <label htmlFor={field.name}>Destination</label>
-                        <InputText
-                            id={field.name}
-                            value={field.value}
-                            className={classNames({
-                                'p-invalid': fieldState.error,
-                            })}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            placeholder="Destination"
-                        />
-                        <label
-                            htmlFor={field.name}
-                            className={classNames({
-                                'p-error': errors.value,
-                            })}
-                        />
-                        {getFormErrorMessage(field.name)}
-                    </>
-                )}
-            />
-            {/*product*/}
-            <Controller
-                name="product"
-                control={control}
-                rules={{ required: 'Product is required.' }}
-                render={({ field, fieldState }) => (
-                    <>
-                        <label htmlFor={field.name}>Product</label>
-                        <InputText
-                            id={field.name}
-                            value={field.value}
-                            className={classNames({
-                                'p-invalid': fieldState.error,
-                            })}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            placeholder="Product"
-                        />
-                        <label
-                            htmlFor={field.name}
-                            className={classNames({
-                                'p-error': errors.value,
-                            })}
-                        />
-                        {getFormErrorMessage(field.name)}
-                    </>
-                )}
-            />
-            {/*deadline*/}
-            <Controller
-                name="deadLine"
-                control={control}
-                rules={{ required: mode === ModalMode.CREATE }}
-                render={({ field, fieldState }) => (
-                    <>
-                        <label htmlFor={field.name}>Due date</label>
-                        <Calendar
-                            inputId={field.name}
-                            value={field.value || new Date()}
-                            onChange={field.onChange}
-                            dateFormat="dd-m-yy"
-                            showIcon
-                            showButtonBar
-                            className={classNames({
-                                'p-invalid': fieldState.error,
-                            })}
-                        />
-                        {getFormErrorMessage(field.name)}
-                    </>
-                )}
-            />
-            {/* employee */}
-            <Controller
-                name="employeeId"
-                control={control}
-                rules={{ required: 'Employee is required.' }}
-                render={({ field, fieldState }) => (
-                    <>
-                        <label htmlFor={field.name}>Employee</label>
-                        <Dropdown
-                            id={field.name}
-                            value={field.value}
-                            optionLabel="name"
-                            placeholder="Select employee"
-                            options={
-                                employees
-                                    ? employees.map((e) => ({ name: `${e.firstName} ${e.lastName}`, value: e.id }))
-                                    : []
-                            }
-                            focusInputRef={field.ref}
-                            onChange={(e) => field.onChange(e.value)}
-                            className={classNames({
-                                'p-invalid': fieldState.error,
-                            })}
-                        />
-                        <label
-                            htmlFor={field.name}
-                            className={classNames({
-                                'p-error': errors.value,
-                            })}
-                        />
-                        {getFormErrorMessage(field.name)}
-                    </>
-                )}
-            />
-            {mode === ModalMode.CREATE ? (
-                <ModalFooter onClose={onClose} icon="pi pi-plus" label="Create" disabled={false} type="submit" />
-            ) : (
-                <div className="flex justify-content-between gap-2">
-                    <Button
-                        type="button"
-                        icon="pi pi-times"
-                        label="Cancel"
-                        severity="secondary"
-                        outlined
-                        onClick={onClose}
-                    />
-                    <Button type="button" icon="pi pi-check" label="Update" onClick={() => console.log('test')} />
-                </div>
-            )}
-            <button type="submit">X</button>
-        </form>
+        <>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-2">
+                <Controller
+                    name="product"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <>
+                            <label htmlFor={field.name}>Product</label>
+                            <InputText
+                                id={field.name}
+                                value={field.value}
+                                className={classNames({
+                                    'p-invalid': fieldState.error,
+                                })}
+                                onChange={(e) => field.onChange(e.target.value)}
+                            />
+                        </>
+                    )}
+                />
+                <Controller
+                    name="startPoint"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <>
+                            <label htmlFor={field.name}>Start point</label>
+                            <InputText
+                                id={field.name}
+                                value={field.value}
+                                className={classNames({
+                                    'p-invalid': fieldState.error,
+                                })}
+                                onChange={(e) => field.onChange(e.target.value)}
+                            />
+                        </>
+                    )}
+                />
+                <Controller
+                    name="destination"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <>
+                            <label htmlFor={field.name}>Destination</label>
+                            <InputText
+                                id={field.name}
+                                value={field.value}
+                                className={classNames({
+                                    'p-invalid': fieldState.error,
+                                })}
+                                onChange={(e) => field.onChange(e.target.value)}
+                            />
+                        </>
+                    )}
+                />
+                <Controller
+                    name="deadLine"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <>
+                            <label htmlFor={field.name}>Due</label>
+                            <Calendar
+                                inputId={field.name}
+                                value={field.value}
+                                className={classNames({
+                                    'p-invalid': fieldState.error,
+                                })}
+                                onChange={field.onChange}
+                                dateFormat="dd-m-yy"
+                                showIcon
+                                showButtonBar
+                            />
+                        </>
+                    )}
+                />
+                <Controller
+                    name="employeeId"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <>
+                            <label htmlFor={field.name}>Due</label>
+                            <Dropdown
+                                options={
+                                    employees
+                                        ? employees.map((e) => ({ name: `${e.firstName} ${e.lastName}`, value: e.id }))
+                                        : []
+                                }
+                                optionLabel="name"
+                                id={field.name}
+                                value={field.value}
+                                className={classNames({
+                                    'p-invalid': fieldState.error,
+                                })}
+                                onChange={(e) => field.onChange(e.value)}
+                                placeholder="Select employee"
+                                focusInputRef={field.ref}
+                            />
+                        </>
+                    )}
+                />
+                <ModalFooter onClose={onClose} icon={icon} label={label} disabled={false} type="submit"></ModalFooter>
+            </form>
+        </>
     );
 };
 

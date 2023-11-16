@@ -60,11 +60,11 @@ export const ModalFooter = ({
     type,
 }: {
     onClose: any;
-    onConfirm: any;
     icon: string;
     label: string;
     disabled: boolean;
     type: 'button' | 'submit';
+    onConfirm?: any;
 }) => (
     <div className="flex w-12 justify-content-between py-2">
         <Button icon="pi pi-times" label="Cancel" onClick={onClose} outlined severity="secondary" />

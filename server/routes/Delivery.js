@@ -35,7 +35,7 @@ router.post('/create', async (req, res) => {
     const newDelivery = await Delivery.build(req.body);
     try {
         await newDelivery.save();
-        res.status(200).json(newDelivery);
+        res.status(201).json(newDelivery);
         console.log('Delivery successfully created');
     } catch (e) {
         throw new Error({ message: 'Failed to create delivery' });

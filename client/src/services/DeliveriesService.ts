@@ -23,9 +23,10 @@ export class DeliveryService {
     }
 
     async createDelivery(data: DeliverySchema) {
-        console.log('test');
+        console.log(data);
         await axios.post('http://localhost:3001/delivery/create', {
             ...data,
+            id: Math.random() * 1000,
         });
     }
 
