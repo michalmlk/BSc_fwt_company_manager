@@ -41,7 +41,7 @@ export interface Truck extends TruckSchema {
 
 export const deliverySchema = z.object({
     product: z.string().min(1, { message: 'Product is required.' }),
-    employeeId: z.number(),
+    employeeId: z.number().nullish(),
     deadLine: z.date(),
     destination: z.string().min(1, { message: 'Destination is required.' }),
     startPoint: z.string().min(1, { message: 'Start point is required.' }),

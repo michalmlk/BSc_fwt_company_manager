@@ -4,13 +4,14 @@ import { ModalFooter } from '../Modal/Modal';
 import { DeliveryService } from '../../../../services/DeliveriesService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ManagerService } from '../../../../services/EmployeeService';
-import { DeliverySchema, Employee } from '../../../../common/model';
+import { DeliverySchema, Employee, deliverySchema } from '../../../../common/model';
 import { toast } from 'react-toastify';
-import { Controller, FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type DeliveryModalContentProps = {
     onClose: () => void;
@@ -39,7 +40,7 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
         deadLine: new Date(),
         destination: '',
         startPoint: '',
-        employeeId: 0,
+        employeeId: null,
         currentStep: 0,
     };
 
@@ -48,7 +49,11 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
         formState: { errors },
         handleSubmit,
         reset,
-    } = useForm(defaultValues);
+    } = useForm({
+        defaultValues,
+        resolver: zodResolver(deliverySchema),
+        reValidateMode: 'onChange',
+    });
 
     const mutation = useMutation({
         mutationFn: async (data: DeliverySchema) => {
@@ -60,6 +65,10 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
             onClose();
         },
     });
+
+    const getFormErrorMessage = (name: string) => (
+        <small className="p-error">{errors[name] ? `${errors[name]?.message}` : ''}</small>
+    );
 
     const onSubmit = async (data: any) => {
         console.log(data);
@@ -93,6 +102,13 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                                 })}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
+                            <label
+                                htmlFor={field.name}
+                                className={classNames({
+                                    'p-error': fieldState.error,
+                                })}
+                            />
+                            {getFormErrorMessage(field.name)}
                         </>
                     )}
                 />
@@ -110,6 +126,13 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                                 })}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
+                            <label
+                                htmlFor={field.name}
+                                className={classNames({
+                                    'p-error': fieldState.error,
+                                })}
+                            />
+                            {getFormErrorMessage(field.name)}
                         </>
                     )}
                 />
@@ -127,6 +150,13 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                                 })}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
+                            <label
+                                htmlFor={field.name}
+                                className={classNames({
+                                    'p-error': fieldState.error,
+                                })}
+                            />
+                            {getFormErrorMessage(field.name)}
                         </>
                     )}
                 />
@@ -155,7 +185,7 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                     control={control}
                     render={({ field, fieldState }) => (
                         <>
-                            <label htmlFor={field.name}>Due</label>
+                            <label htmlFor={field.name}>Employee</label>
                             <Dropdown
                                 options={
                                     employees
@@ -172,6 +202,13 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                                 placeholder="Select employee"
                                 focusInputRef={field.ref}
                             />
+                            <label
+                                htmlFor={field.name}
+                                className={classNames({
+                                    'p-error': fieldState.error,
+                                })}
+                            />
+                            {getFormErrorMessage(field.name)}
                         </>
                     )}
                 />
