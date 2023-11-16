@@ -75,6 +75,10 @@ button:focus-visible {
     background-color: rgba(1, 22, 61, 0.5);
 }
 
+#modal-root {
+    z-index: 999;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;

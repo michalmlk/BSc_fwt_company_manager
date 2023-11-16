@@ -1,4 +1,3 @@
-import React from 'react';
 import { Truck, ModalMode, TruckTechnicalState } from '../../../../Model';
 import { Controller, useForm } from 'react-hook-form';
 import { classNames } from 'primereact/utils';
@@ -34,7 +33,6 @@ const TruckModalContent: ({
         control,
         formState: { errors },
         handleSubmit,
-        getValues,
         reset,
     } = useForm({
         defaultValues,

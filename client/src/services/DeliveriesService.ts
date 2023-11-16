@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { DeliverySchema } from '../common/model';
 
 export class DeliveryService {
     async getDeliveries() {
@@ -19,5 +20,18 @@ export class DeliveryService {
         } catch (e: any) {
             console.log(e.message);
         }
+    }
+
+    async createDelivery(data: DeliverySchema) {
+        console.log('test');
+        await axios.post('http://localhost:3001/delivery/create', {
+            ...data,
+        });
+    }
+
+    async updateDelivery(data: DeliverySchema, deliveryId: number) {
+        await axios.post(`http://localhost:3001/delivery/update/${deliveryId}`, {
+            ...data,
+        });
     }
 }

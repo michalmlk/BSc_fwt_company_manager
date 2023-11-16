@@ -21,7 +21,11 @@ const DeliveriesPage: React.FC = () => {
                 renderFooter={false}
                 classNames="w-5"
             >
-                <DeliveryModalContent mode={ModalMode.CREATE} onClose={handleCreateDeliveryModalClose} />
+                <DeliveryModalContent
+                    selectedDelivery={undefined}
+                    mode={ModalMode.CREATE}
+                    onClose={handleCreateDeliveryModalClose}
+                />
             </Modal>
         );
     }, [handleCreateDeliveryModalClose]);
