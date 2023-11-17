@@ -23,11 +23,14 @@ export class DeliveryService {
     }
 
     async createDelivery(data: DeliverySchema) {
-        console.log(data);
         await axios.post('http://localhost:3001/delivery/create', {
             ...data,
             id: Math.random() * 1000,
         });
+    }
+
+    async removeDelivery(id: number) {
+        await axios.post(`http://localhost:3001/delivery/delete/${id}`);
     }
 
     async updateDelivery(data: DeliverySchema, deliveryId: number) {

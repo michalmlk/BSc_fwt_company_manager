@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Delivery, Employee, Truck } from '../../../common/model';
 import { Card } from 'primereact/card';
 import { ManagerService } from '../../../services/EmployeeService';
@@ -9,9 +9,12 @@ import { Button } from 'primereact/button';
 import { StepsContainer } from './DeliveryCard.styles';
 import { DeliveryService } from '../../../services/DeliveriesService';
 import { toast } from 'react-toastify';
+import useModal from '../../../hooks/useModal';
+import Modal from '../Modal/Modal/Modal';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
-    const { id, product, employeeId, deadLine, destination, startPoint, currentStep } = delivery;
+    const { product, employeeId, deadLine, destination, startPoint, currentStep, id } = delivery;
 
     const employeeService = new ManagerService();
     const truckService = new TruckService();
@@ -68,16 +71,68 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
         toast.dismiss(toastId);
     };
 
+    const queryClient = useQueryClient();
+
+    const handleRemoveDelivery = async (id: number) => {
+        const toastId = toast.loading('Deleting delivery...');
+        try {
+            await service.removeDelivery(id);
+            await queryClient.invalidateQueries(['deliveries']);
+            toast.success('Delivery successfully removed');
+        } catch (e) {
+            toast.error('Failed to remove delivery');
+        }
+        toast.dismiss(toastId);
+    };
+
+    const { isModalOpen, handleModalOpen, handleModalClose } = useModal(false);
+    const ConfirmDeleteDeliveryModal = useMemo(
+        () => (
+            <Modal title="Confirmation required" onClose={handleModalClose} renderFooter={false}>
+                <p>Are you sure you want to remove delivery? This operation could not be reverted.</p>
+                <div className="flex justify-content-between mx-2">
+                    <Button
+                        onClick={handleModalClose}
+                        label="Cancel"
+                        icon="pi pi-times"
+                        outlined
+                        severity="secondary"
+                    />
+                    <Button
+                        onClick={async () => await handleRemoveDelivery(id)}
+                        label="Delete"
+                        icon="pi pi-check"
+                        severity="danger"
+                    />
+                </div>
+            </Modal>
+        ),
+        [id]
+    );
+
     return (
         <Card title={`Destination: ${destination}`}>
-            <DeliveryDetails
-                deadLine={deadLine}
-                startPoint={startPoint}
-                currentStep={currentStep}
-                product={product}
-                employee={employee!}
-                truck={truck!}
-            />
+            {isModalOpen && ConfirmDeleteDeliveryModal}
+            <div className="flex justify-content-between align-items-start">
+                <DeliveryDetails
+                    id={id}
+                    deadLine={deadLine}
+                    startPoint={startPoint}
+                    currentStep={currentStep}
+                    product={product}
+                    employee={employee!}
+                    truck={truck!}
+                />
+                <Button
+                    onClick={handleModalOpen}
+                    icon="pi pi-times"
+                    tooltip="Remove delivery"
+                    severity="danger"
+                    tooltipOptions={{
+                        position: 'left',
+                    }}
+                />
+            </div>
             <StepsContainer>
                 <Steps
                     model={deliveryStatusItems}

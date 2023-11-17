@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyledDetails } from './DeliveryDetails.styles';
 import { format } from 'date-fns';
 import { Employee, Truck } from '../../../common/model';
+import { Button } from 'primereact/button';
+import useModal from '../../../hooks/useModal';
+import Modal from '../../organisms/Modal/Modal/Modal';
+import { DeliveryService } from '../../../services/DeliveriesService';
 
 type DeliveryDetailsProps = {
     deadLine: Date;
@@ -10,6 +14,7 @@ type DeliveryDetailsProps = {
     currentStep: number;
     employee: Employee;
     truck: Truck;
+    id: number;
 };
 
 const DeliveryDetails: React.FC<DeliveryDetailsProps> = ({
