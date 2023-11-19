@@ -17,3 +17,11 @@ export enum TruckTechnicalState {
     SERVICE = 'serviced',
     DELIVERY = 'delivery',
 }
+
+export enum DeliveryStep {
+    STARTED,
+    LOADED,
+    IN_PROGRESS,
+    UNLOADED,
+    FINALIZED,
+}

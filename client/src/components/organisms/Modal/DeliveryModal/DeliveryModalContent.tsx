@@ -71,7 +71,6 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
     );
 
     const onSubmit = async (data: any) => {
-        console.log(data);
         const toastId = toast.loading('Creating delivery');
         try {
             await mutation.mutateAsync({
@@ -189,7 +188,9 @@ const DeliveryModalContent: React.FC<DeliveryModalContentProps> = ({ mode, onClo
                             <Dropdown
                                 options={
                                     employees
-                                        ? employees.map((e) => ({ name: `${e.firstName} ${e.lastName}`, value: e.id }))
+                                        ? employees
+                                              .filter((e) => !e.currentDeliveryId && e.truckId)
+                                              .map((e) => ({ name: `${e.firstName} ${e.lastName}`, value: e.id }))
                                         : []
                                 }
                                 optionLabel="name"

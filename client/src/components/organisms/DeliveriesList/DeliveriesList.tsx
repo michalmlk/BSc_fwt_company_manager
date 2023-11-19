@@ -15,7 +15,11 @@ const DeliveriesList: React.FC = () => {
 
     return (
         <DeliveriesListWrapper>
-            {deliveries && deliveries.map((data: Delivery) => <DeliveryCard key={data.id} delivery={data} />)}
+            {deliveries.length ? (
+                deliveries.map((data: Delivery) => <DeliveryCard key={data.id} delivery={data} />)
+            ) : (
+                <h1>No deliveries</h1>
+            )}
         </DeliveriesListWrapper>
     );
 };

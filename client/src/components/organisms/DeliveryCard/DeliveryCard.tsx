@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import useModal from '../../../hooks/useModal';
 import Modal from '../Modal/Modal/Modal';
 import { useQueryClient } from '@tanstack/react-query';
+import { DeliveryStep } from '../../../Model';
 
 const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
     const { product, employeeId, deadLine, destination, startPoint, currentStep, id } = delivery;
@@ -53,11 +54,14 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
             }
         };
         handleGetData();
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleToggleEditMode = () => {
         setIsReadonly((prev) => !prev);
     };
+
+    const queryClient = useQueryClient();
 
     const handleCommitStatusChange = async (index: number) => {
         const toastId = toast.loading('Updating status');
@@ -65,20 +69,24 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
             await service.commitStatusChange(id, index);
             setIsReadonly(true);
             toast.success('Update successful.');
+            await queryClient.invalidateQueries(['deliveries']);
         } catch (e) {
             toast.error('Update failed.');
         }
         toast.dismiss(toastId);
     };
 
-    const queryClient = useQueryClient();
-
     const handleRemoveDelivery = async (id: number) => {
         const toastId = toast.loading('Deleting delivery...');
         try {
-            await service.removeDelivery(id);
-            await queryClient.invalidateQueries(['deliveries']);
-            toast.success('Delivery successfully removed');
+            if (currentStep !== DeliveryStep.FINALIZED) {
+                toast.error('Could not remove delivery which is not finalized.');
+                handleModalClose();
+            } else {
+                await service.removeDelivery(id);
+                await queryClient.invalidateQueries(['deliveries']);
+                toast.success('Delivery successfully removed');
+            }
         } catch (e) {
             toast.error('Failed to remove delivery');
         }
@@ -107,7 +115,8 @@ const DeliveryCard: React.FC<{ delivery: Delivery }> = ({ delivery }) => {
                 </div>
             </Modal>
         ),
-        [id]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [id, delivery]
     );
 
     return (

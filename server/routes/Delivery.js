@@ -1,5 +1,5 @@
 const express = require('express');
-const { Delivery } = require('../models');
+const { Delivery, Employee } = require('../models');
 const { sequelize } = require('../models/index');
 
 const router = express.Router();
@@ -32,13 +32,21 @@ router.post(`/updateStatus/:id`, async (req, res) => {
 });
 
 router.post('/create', async (req, res) => {
-    const newDelivery = await Delivery.build(req.body);
     try {
-        await newDelivery.save();
-        res.status(201).json(newDelivery);
-        console.log('Delivery successfully created');
+        await sequelize.transaction(async function (transaction) {
+            const newDelivery = await Delivery.build(req.body);
+            await newDelivery.save();
+            const user = await Employee.findOne({ where: { id: req.body.employeeId } });
+            if (user) {
+                await user.update({ currentDeliveryId: req.body.id }, { transaction });
+                await user.save();
+                console.log('Delivery successfully created');
+            }
+            res.status(201).json(newDelivery);
+        });
     } catch (e) {
-        throw new Error({ message: 'Failed to create delivery' });
+        res.status(500).send('Bad request');
+        console.log(e.message);
     }
 });
 
@@ -55,23 +63,33 @@ router.post('/update/:id', async (req, res) => {
         });
         await delivery.save();
         res.status(201).json(delivery);
-        console.log('Delivery successfully created');
+        console.log('Delivery successfully updated');
     } catch (e) {
         throw new Error({ message: 'Failed to update delivery' });
     }
 });
 
 router.post('/delete/:id', async (req, res) => {
-    const id = req.params.id;
+    const delivery = await Delivery.findOne({ where: { id: parseInt(req.params.id) } });
     try {
-        await Delivery.destroy({
-            where: {
-                id,
-            },
+        await sequelize.transaction(async function (trx) {
+            if (delivery.employeeId) {
+                const user = await Employee.findOne({ where: { id: delivery.employeeId } });
+                await user.update({ currentDeliveryId: null }, { trx });
+                await user.save();
+            }
+            await Delivery.destroy(
+                {
+                    where: {
+                        id: parseInt(req.params.id),
+                    },
+                },
+                { trx }
+            );
         });
-        res.status(200).send(`Delivery with ${id} successfully deleted`);
+        res.status(200).send(`Delivery successfully deleted`);
     } catch (e) {
-        res.status(500).send(`Failed to remove truck ${e.message}`);
+        res.status(500).send(`Failed to remove delivery ${e.message}`);
     }
 });
 
