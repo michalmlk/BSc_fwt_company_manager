@@ -7,7 +7,7 @@ import Modal from '../../organisms/Modal/Modal/Modal';
 import TruckModalContent from '../../organisms/Modal/TruckModal/TruckModalContent';
 import { trucksLoader, trucksQuery } from '../../../loaders/trucksLoader';
 import { useLoaderData } from 'react-router-dom';
-import { Truck, TruckModalMode } from '../../../Model';
+import { Truck, ModalMode } from '../../../Model';
 
 const MachineParkPage: React.FC = () => {
     const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof trucksLoader>>>;
@@ -36,7 +36,7 @@ const MachineParkPage: React.FC = () => {
                 <TruckModalContent
                     selectedTruck={undefined}
                     onClose={handleAddTruckModalClose}
-                    mode={TruckModalMode.CREATE}
+                    mode={ModalMode.CREATE}
                 />
             </Modal>
         );
@@ -47,7 +47,7 @@ const MachineParkPage: React.FC = () => {
             <Modal title="Manage truck" onClose={handleManageTruckModalClose} renderFooter={false} classNames="w-3">
                 <TruckModalContent
                     selectedTruck={selectedTruck}
-                    mode={TruckModalMode.EDIT}
+                    mode={ModalMode.EDIT}
                     onClose={handleManageTruckModalClose}
                 />
             </Modal>

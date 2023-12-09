@@ -31,7 +31,7 @@ export class ManagerService {
         }
     }
 
-    async updateEmployee(id: number, updateData: any): Promise<void> {
+    async updateEmployee(updateData: any, id: number): Promise<void> {
         try {
             await axios.put(`http://localhost:3001/employee/updateEmployee/${id}`, updateData);
             console.log(`Update successfull`);

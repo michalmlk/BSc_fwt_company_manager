@@ -2,7 +2,7 @@ import React from 'react';
 import { Employee } from '../../../common/model';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import { ManagerService } from '../../../services/ManagerService';
+import { ManagerService } from '../../../services/EmployeeService';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 

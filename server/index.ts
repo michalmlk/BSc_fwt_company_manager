@@ -1,4 +1,5 @@
-import express, { Express, Request } from 'express';
+import { Express, Request } from 'express';
+const express = require('express');
 
 const cors = require('cors');
 const database = require('./models');
@@ -16,6 +17,9 @@ app.use('/employee', employeeRoute);
 
 const trucksRoute = require('./routes/Truck');
 app.use('/truck', trucksRoute);
+
+const deliveriesRoute = require('./routes/Delivery');
+app.use('/delivery', deliveriesRoute);
 
 database.sequelize.sync().then((req: Request) => {
     app.listen(port, () => {
