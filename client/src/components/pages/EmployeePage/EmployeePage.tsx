@@ -35,8 +35,6 @@ const EmployeePage: React.FC = () => {
             </Modal>
         );
     }, [handleEmployeeModalClose, currentEmployee]);
-
-    // const EmployeeFormModal = React.useMemo(
     //     () => (
     //         <Modal
     //             title={`${currentEmployee ? 'Edit' : 'Add'} Employee`}

@@ -15,6 +15,8 @@ const trucksRoute = require('./routes/Truck');
 app.use('/truck', trucksRoute);
 const deliveriesRoute = require('./routes/Delivery');
 app.use('/delivery', deliveriesRoute);
+const usersRoute = require('./routes/User');
+app.use('/user', usersRoute);
 database.sequelize.sync().then((req) => {
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
