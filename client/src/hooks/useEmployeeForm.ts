@@ -5,22 +5,18 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-enum EmployeeFormMode {
-    CREATE,
-    EDIT,
-}
-
-const defaultValues = {
-    firstName: '',
-    lastName: '',
-    age: 18,
-    phoneNumber: undefined,
-    email: '',
-};
-
-const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
+const useEmployeeForm = ({ onClose, currentEmployee }: { onClose: () => void; currentEmployee: any }) => {
     const managerService = new ManagerService();
     const queryClient = useQueryClient();
+
+    const defaultValues = {
+        firstName: currentEmployee?.firstName || '',
+        lastName: currentEmployee?.lastName || '',
+        age: currentEmployee?.age || 18,
+        phoneNumber: currentEmployee?.phoneNumber || undefined,
+        email: currentEmployee?.email || '',
+    };
+
     const {
         reset,
         formState: { errors },
@@ -28,10 +24,8 @@ const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
         handleSubmit,
     } = useForm({ defaultValues, resolver: zodResolver(employeeSchema), reValidateMode: 'onChange' });
 
-    let mode = 0;
-
-    const onSubmit = async (data: Employee): Promise<void> => {
-        if (mode === EmployeeFormMode.CREATE && data) {
+    const onSubmit = async (data: Employee, mode: boolean): Promise<void> => {
+        if (mode && data) {
             const toastId = toast.loading('Creating employee...');
             try {
                 await managerService.createEmployee(data);
@@ -42,8 +36,7 @@ const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
             }
             reset();
             toast.dismiss(toastId);
-        }
-        if (mode === EmployeeFormMode.EDIT && data?.id) {
+        } else {
             const toastId = toast.loading('Updating employee');
             try {
                 await managerService.updateEmployee(data.id, data);
@@ -63,6 +56,7 @@ const useEmployeeForm = ({ onClose }: { onClose: () => void }) => {
         control,
         reset,
         handleSubmit,
+        defaultValues,
     };
 };
 

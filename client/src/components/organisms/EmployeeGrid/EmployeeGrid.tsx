@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { ManagerService } from '../../../services/EmployeeService';
 import { Employee } from '../../../common/model';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,7 +17,12 @@ import { useLoaderData } from 'react-router-dom';
 import { employeeQuery, employeesLoader } from '../../../loaders/employeesLoader';
 import { trucksLoader, trucksQuery } from '../../../loaders/trucksLoader';
 
-const EmployeeGrid: React.FC = () => {
+interface EmployeeGridProps {
+    onEditEmployee: () => void;
+    onDataSet: Dispatch<SetStateAction<Employee | undefined>>;
+}
+
+const EmployeeGrid: React.FC<EmployeeGridProps> = ({ onEditEmployee, onDataSet }) => {
     const service = new ManagerService();
     const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
     const [employeeData, setEmployeeData] = useState<Employee>();
@@ -176,12 +181,13 @@ const EmployeeGrid: React.FC = () => {
 
     const actionsTemplate = (data: Employee): JSX.Element => (
         <div className="flex gap-3 justify-content-end">
-            <Button icon="pi pi-file-edit" text />
             <Button
                 icon="pi pi-pencil"
                 text
                 onClick={() => {
                     setEmployeeData(data);
+                    onDataSet(data);
+                    onEditEmployee();
                     handleEmployeeFormModalOpen();
                 }}
             />
@@ -191,7 +197,9 @@ const EmployeeGrid: React.FC = () => {
                 onClick={() => {
                     setEmployeeData(data);
                     handleAssignTruckModalOpen();
+                    console.log(data);
                 }}
+                disabled={!!data.currentDeliveryId}
             />
             <Button
                 icon="pi pi-trash"
