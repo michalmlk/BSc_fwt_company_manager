@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { trucksLoader } from './loaders/trucksLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { deliveriesLoader } from './loaders/deliveriesLoader';
+import LoginPage from './components/pages/LoginPage/LoginPage';
 
 const App: React.FC = () => {
     const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ const App: React.FC = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<MainTemplate />}>
+                <Route path="login" element={<LoginPage />} />
                 <Route index element={<Navigate to="/home" />} />
                 <Route path="home" element={<DeliveriesPage />} loader={deliveriesLoader(queryClient)} />
                 <Route path="employees" element={<EmployeePage />} />
