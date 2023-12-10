@@ -72,7 +72,12 @@ router.get('/userdata', checkToken, (req, res) => {
         } else {
             res.status(200).json({
                 message: 'Successfully logged in.',
-                authorizedData,
+                userData: {
+                    id: authorizedData.user.id,
+                    userName: authorizedData.user.login,
+                    firstName: authorizedData.user.firstName,
+                    lastName: authorizedData.user.lastName,
+                },
             });
         }
     });
