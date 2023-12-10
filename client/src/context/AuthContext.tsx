@@ -6,9 +6,14 @@ interface IAuthContext {
     setToken: (token: string) => void;
 }
 
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+export const AuthContext = createContext<IAuthContext>({
+    token: null,
+    setToken: () => {
+        /* do nothing */
+    },
+});
 
-const AuthProvider: React.FC<{ children: React.ReactNode[] }> = ({ children }) => {
+const AuthProvider: React.FC<{ children: React.ReactNode | React.ReactNode[] }> = ({ children }) => {
     const [token, _setToken] = useState<string | null>(localStorage.getItem('token'));
 
     const setToken = (newToken: string) => _setToken(newToken);

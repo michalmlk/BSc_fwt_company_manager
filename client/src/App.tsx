@@ -11,29 +11,74 @@ import { trucksLoader } from './loaders/trucksLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { deliveriesLoader } from './loaders/deliveriesLoader';
 import LoginPage from './components/pages/LoginPage/LoginPage';
+import { ProtectedRoute } from './components/templates/ProtectedRoute';
+import { useAuth } from './hooks/useAuth';
+import AuthProvider from './context/AuthContext';
 
 const App: React.FC = () => {
     const queryClient = new QueryClient();
+    const { token } = useAuth();
+
+    const routesForUnauthorizedUser = [
+        {
+            path: '/',
+            element: <div>Test home page</div>,
+        },
+        {
+            path: '/login',
+            element: <LoginPage />,
+        },
+    ];
+
+    const routesForAuthenticatedUsers = [
+        {
+            path: '/',
+            element: <ProtectedRoute />,
+            children: [
+                {
+                    path: '/home',
+                    element: <DeliveriesPage />,
+                    loader: deliveriesLoader(queryClient),
+                },
+                {
+                    path: '/employees',
+                    element: <EmployeePage />,
+                },
+                {
+                    path: '/trucks',
+                    element: <MachineParkPage />,
+                    loader: trucksLoader(queryClient),
+                },
+                {
+                    path: '*',
+                    element: <ErrorPage />,
+                },
+            ],
+        },
+    ];
 
     const router = createBrowserRouter(
-        createRoutesFromElements(
-            <Route path="/" element={<MainTemplate />}>
-                <Route path="login" element={<LoginPage />} />
-                <Route index element={<Navigate to="/home" />} />
-                <Route path="home" element={<DeliveriesPage />} loader={deliveriesLoader(queryClient)} />
-                <Route path="employees" element={<EmployeePage />} />
-                <Route path="trucks" element={<MachineParkPage />} loader={trucksLoader(queryClient)} />
-                <Route path="settings" element={<h1>Welcome settings</h1>} />
-                <Route path="*" element={<ErrorPage />} />
-            </Route>
-        )
+        [...(!token ? routesForUnauthorizedUser : []), ...routesForAuthenticatedUsers]
+        // createRoutesFromElements(
+        //     <Route path="/" element={<MainTemplate />}>
+        //         <Route path="login" element={<LoginPage />} />
+        //         <Route index element={<Navigate to="/home" />} />
+        //         <Route path="home" element={<DeliveriesPage />} loader={deliveriesLoader(queryClient)} />
+        //         <Route path="employees" element={<EmployeePage />} />
+        //         <Route path="trucks" element={<MachineParkPage />} loader={trucksLoader(queryClient)} />
+        //         <Route path="settings" element={<h1>Welcome settings</h1>} />
+        //         <Route path="*" element={<ErrorPage />} />
+        //     </Route>
+        // )
     );
 
     return (
-        <QueryClientProvider client={queryClient} contextSharing={false}>
-            <ReactQueryDevtools initialIsOpen />
-            <RouterProvider router={router} />
-        </QueryClientProvider>
+        <AuthProvider>
+            <QueryClientProvider client={queryClient} contextSharing={false}>
+                <ReactQueryDevtools initialIsOpen />
+                <RouterProvider router={router} />
+            </QueryClientProvider>
+        </AuthProvider>
     );
 };
 

@@ -1,16 +1,23 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useAuth } from '../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
+    const { setToken } = useAuth();
+    const navigate = useNavigate();
 
     const onLogin = async (login, password) => {
         const { data } = await axios.post('http://localhost:3001/user/login', {
             userName: login,
             password,
         });
-        sessionStorage.setItem('token', data);
+        if (data) {
+            setToken(data);
+            navigate('/home', { replace: true });
+        }
     };
     return (
         <div>
