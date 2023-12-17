@@ -32,6 +32,7 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                     'https://img.freepik.com/free-photo/3d-render-cargo-delivery-truck_1048-5605.jpg?w=1380&t=st=1694870739~exp=1694871339~hmac=91e29ea230548d170615e814da9f866a438636c0c52f150d491d29993f975277'
                 }
             />
+            {/* <a href="https://www.freepik.com/free-photo/3d-render-cargo-delivery-truck_1110770.htm#query=truck&position=9&from_view=search&track=sph&uuid=86000176-3015-4bec-af57-be91afd21bd4">Image by kjpargeter</a> on Freepik */}
         </div>
     );
 
@@ -82,13 +83,6 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                                 {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Nobody'}
                             </strong>
                         </StyledRow>
-                        <Button
-                            icon="pi pi-pencil"
-                            size="small"
-                            severity="secondary"
-                            text
-                            tooltip="Change assignment"
-                        />
                     </div>
                 </p>
                 <p
@@ -105,13 +99,6 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                         >
                             Next tech review: <strong>{format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}</strong>
                         </StyledRow>
-                        <Button
-                            icon="pi pi-pencil"
-                            size="small"
-                            severity="secondary"
-                            text
-                            tooltip="Update tech review"
-                        />
                     </div>
                 </p>
             </div>
