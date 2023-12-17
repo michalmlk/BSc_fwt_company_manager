@@ -36,6 +36,10 @@ const App: React.FC = () => {
             element: <ProtectedRoute />,
             children: [
                 {
+                    path: '/',
+                    element: <Navigate to="home" />,
+                },
+                {
                     path: '/home',
                     element: <DeliveriesPage />,
                     loader: deliveriesLoader(queryClient),
