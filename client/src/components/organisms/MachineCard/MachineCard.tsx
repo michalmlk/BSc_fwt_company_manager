@@ -82,13 +82,6 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                                 {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Nobody'}
                             </strong>
                         </StyledRow>
-                        <Button
-                            icon="pi pi-pencil"
-                            size="small"
-                            severity="secondary"
-                            text
-                            tooltip="Change assignment"
-                        />
                     </div>
                 </p>
                 <p
@@ -105,13 +98,6 @@ const MachineCard: React.FC<{ machine: Truck; onManage: () => void }> = ({ machi
                         >
                             Next tech review: <strong>{format(new Date(machine.techReviewDate!), 'yyyy-MM-dd')}</strong>
                         </StyledRow>
-                        <Button
-                            icon="pi pi-pencil"
-                            size="small"
-                            severity="secondary"
-                            text
-                            tooltip="Update tech review"
-                        />
                     </div>
                 </p>
             </div>

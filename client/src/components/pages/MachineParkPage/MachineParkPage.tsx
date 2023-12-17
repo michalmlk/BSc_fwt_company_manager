@@ -55,7 +55,7 @@ const MachineParkPage: React.FC = () => {
     }, [handleAddTruckModalClose, selectedTruck]);
 
     return (
-        <div className="flex flex-column w-full relative px-6">
+        <div className="flex flex-column w-full relative">
             {isAddTruckModalOpen && AddTruckModal}
             {isManageTruckModalOpen && ManageTruckModal}
             <ActionBar onAdd={handleAddTruckModalOpen} label="Add truck" icon="pi pi-plus" />
